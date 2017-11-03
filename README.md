@@ -66,7 +66,7 @@ const {payloadObj: {data: {name}}} = parse('eyJhbGciOiJIUz...')
 
 ## API
 
-(See documentation)[https://lagden.github.io/jwt]
+[See documentation](https://lagden.github.io/jwt)
 
 
 ## License
