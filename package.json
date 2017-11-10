@@ -1,7 +1,7 @@
 {
   "name": "@tadashi/jwt",
-  "version": "1.0.0",
-  "description": "Generates, verifies and parses a JWT (JSON Web Token)",
+  "version": "1.0.1",
+  "description": "Generates, verifies and parses a JSON Web Token",
   "main": "index.js",
   "files": [
     "LICENSE",
@@ -22,6 +22,11 @@
   ],
   "author": "Thiago Lagden",
   "license": "MIT",
+  "dependencies": {
+    "@tadashi/debug": "1.1.0",
+    "jsrsasign": "8.0.4",
+    "uuid": "3.1.0"
+  },
   "devDependencies": {
     "ava": "0.23.0",
     "coveralls": "3.0.0",
@@ -44,10 +49,5 @@
       ],
       "capitalized-comments": 0
     }
-  },
-  "dependencies": {
-    "@tadashi/debug": "1.1.0",
-    "jsrsasign": "8.0.4",
-    "uuid": "3.1.0"
   }
 }

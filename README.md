@@ -10,8 +10,6 @@
 [![Greenkeeper badge][greenkeeper-img]][greenkeeper]
 
 
-[greenkeeper-img]: https://badges.greenkeeper.io/lagden/jwt.svg
-[greenkeeper]:     https://greenkeeper.io/
 [npm-img]:         https://img.shields.io/npm/v/@tadashi/jwt.svg
 [npm]:             https://www.npmjs.com/package/@tadashi/jwt
 [ci-img]:          https://travis-ci.org/lagden/jwt.svg
@@ -24,8 +22,11 @@
 [devDep]:          https://david-dm.org/lagden/jwt#info=devDependencies
 [xo-img]:          https://img.shields.io/badge/code_style-XO-5ed9c7.svg
 [xo]:              https://github.com/sindresorhus/xo
+[greenkeeper-img]: https://badges.greenkeeper.io/lagden/jwt.svg
+[greenkeeper]:     https://greenkeeper.io/
 
-Generates, verifies and parses a JWT (JSON Web Token)
+
+Generates, verifies and parses a JSON Web Token
 
 ## Install
 
@@ -36,28 +37,14 @@ $ npm i -S @tadashi/jwt
 
 ## Usage
 
-### sign
-
 ```js
-const {sign} = require('@tadashi/jwt')
+const {sign, verify, parse} = require('@tadashi/jwt')
 
 const jwt = sign({name: 'Lucas Tadashi'})
 // => eyJhbGciOiJIUz...
-```
-
-### verify
-
-```js
-const {verify} = require('@tadashi/jwt')
 
 const isValid = verify('eyJhbGciOiJIUz...', 'app:key', 'http://127.0.0.1')
 // => true
-```
-
-### parse
-
-```js
-const {parse} = require('@tadashi/jwt')
 
 const {payloadObj: {data: {name}}} = parse('eyJhbGciOiJIUz...')
 // => Lucas Tadashi
