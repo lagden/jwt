@@ -12,7 +12,7 @@ const debug = require('@tadashi/debug')
 const {
 	TADASHI_SECRET_KEY_JWT = 'de66bd178d5abc9e848787b678f9b613',
 	TADASHI_CLAIM_ISS = 'app:key',
-	TADASHI_CLAIM_AUD = 'http://127.0.0.1',
+	TADASHI_CLAIM_AUD = false,
 	TADASHI_ALG = 'HS512'
 } = process.env
 const secret = {utf8: TADASHI_SECRET_KEY_JWT}
@@ -32,11 +32,11 @@ function _jti() {
 /**
  * Gera uma assinatura JWT (JSON Web Token)
  *
- * @param {(object|string)} payload - Carga de dados
- * @param {object} [options={}] - Opções
- * @param {number} [options.duration=0] - Tempo de duração do JWT em milisegundos
- * @param {string} [options.iss=app:key] - Identifica o app que fez a chamada
- * @param {string} [options.aud=http://127.0.0.1] - Identifica os destinatários para os quais o JWT se destina
+ * @param {(object|string)} payload                - Carga de dados
+ * @param {object} [options={}]                    - Opções
+ * @param {number} [options.duration=0]            - Tempo de duração do JWT em milisegundos
+ * @param {string} [options.iss=TADASHI_CLAIM_ISS] - Identifica o app que fez a chamada
+ * @param {string} [options.aud=TADASHI_CLAIM_AUD] - Identifica os destinatários para os quais o JWT se destina
  * @returns {string} JWT
  */
 function sign(payload, options = {}) {
@@ -48,7 +48,9 @@ function sign(payload, options = {}) {
 	const _payload = Object.create(null)
 
 	_payload.iss = iss
-	_payload.aud = aud
+	if (aud) {
+		_payload.aud = String(aud).split(', ')
+	}
 	_payload.nbf = tNow
 	_payload.iat = tNow
 	if (duration > 0) {
@@ -65,17 +67,23 @@ function sign(payload, options = {}) {
 /**
  * Verifica se a assinatura JWT (JSON Web Token) é válida
  *
- * @param {string} jwt - JWT (JSON Web Token)
- * @param {string} iss - Identificação do app
- * @param {string} aud - Origem da chamada
+ * @param {string} jwt                  - JWT (JSON Web Token)
+ * @param {object} [options={}]         - Opções
+ * @param {string} [options.iss=false]  - Identifica o app que fez a chamada
+ * @param {string} [options.aud=false]  - Origem da chamada
  * @returns {boolean}
  */
-function verify(jwt, iss, aud = '') {
+function verify(jwt, options = {}) {
+	const {iss = false, aud = false} = options
 	const _claims = Object.create(null)
 	_claims.alg = [alg]
 	_claims.verifyAt = Date.now()
-	_claims.iss = [iss]
-	_claims.aud = aud.split(',')
+	if (iss) {
+		_claims.iss = [iss]
+	}
+	if (aud) {
+		_claims.aud = aud.split(',')
+	}
 	try {
 		return JWS.verifyJWT(jwt, secret, _claims)
 	} catch (err) {
