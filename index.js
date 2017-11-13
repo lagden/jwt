@@ -15,6 +15,7 @@ const {
 	TADASHI_CLAIM_AUD = false,
 	TADASHI_ALG = 'HS512'
 } = process.env
+
 const secret = {utf8: TADASHI_SECRET_KEY_JWT}
 const alg = TADASHI_ALG
 
@@ -82,7 +83,7 @@ function verify(jwt, options = {}) {
 		_claims.iss = [iss]
 	}
 	if (aud) {
-		_claims.aud = aud.split(',')
+		_claims.aud = aud
 	}
 	try {
 		return JWS.verifyJWT(jwt, secret, _claims)
