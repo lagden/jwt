@@ -31,6 +31,20 @@ function _jti() {
 }
 
 /**
+ * Helper para validar `aud`
+ * @private
+ *
+ * @returns {string} aud
+ */
+function _aud(jwt, aud) {
+	const {payloadObj: data} = parse(jwt)
+	if (data && data.aud && data.aud.includes(aud)) {
+		return data.aud
+	}
+	return [aud]
+}
+
+/**
  * Gera uma assinatura JWT (JSON Web Token)
  *
  * @param {(object|string)} payload                - Carga de dados
@@ -48,7 +62,7 @@ function sign(payload, options = {}) {
 	const tEnd = tNow + duration
 	const _payload = Object.create(null)
 
-	_payload.iss = iss
+	_payload.iss = [iss]
 	if (aud) {
 		_payload.aud = String(aud).split(', ')
 	}
@@ -83,7 +97,7 @@ function verify(jwt, options = {}) {
 		_claims.iss = [iss]
 	}
 	if (aud) {
-		_claims.aud = aud
+		_claims.aud = _aud(jwt, aud)
 	}
 	try {
 		return JWS.verifyJWT(jwt, secret, _claims)

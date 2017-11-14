@@ -11,30 +11,36 @@ function sleep(ms) {
 	})
 }
 
-test('[basic] sign, verify, parse and claims', t => {
-	const jwt = sign({name: 'Lucas Tadashi'}, {iss: 'app:xxx', aud: 'http://127.0.0.3, http://127.0.0.2'})
-	const isValid = verify(jwt, {iss: 'app:xxx', aud: 'http://127.0.0.3'})
-	const {payloadObj: payload} = parse(jwt)
-	t.true(isValid)
-	t.is(payload.data.name, 'Lucas Tadashi')
-})
-
-test('[duration] sign, verify', async t => {
-	const jwt = sign({name: 'Sabrina Takamoto'}, {duration: 1, aud: 'http://127.0.0.2'})
-	await sleep(10)
-	const isValid = verify(jwt, {aud: 'http://127.0.0.2'})
-	t.false(isValid)
-})
-
 test('[default] sign, verify', t => {
 	const jwt = sign({name: 'Sabrina Takamoto'})
 	const isValid = verify(jwt)
 	t.true(isValid)
 })
 
-test('[invalid] verify', t => {
+test('[basic] sign, verify, parse and claims', t => {
+	const jwt = sign({name: 'Lucas Tadashi'}, {iss: 'app:xxx', aud: 'http://127.0.0.3, http://127.0.0.2'})
+	const isValid = verify(jwt, {iss: 'app:xxx', aud: 'http://127.0.0.2'})
+	const {payloadObj: payload} = parse(jwt)
+	t.true(isValid)
+	t.is(payload.data.name, 'Lucas Tadashi')
+})
+
+test('[duration] sign, verify', async t => {
+	const jwt = sign({name: 'Sabrina Takamoto'}, {duration: 1})
+	await sleep(10)
+	const isValid = verify(jwt)
+	t.false(isValid)
+})
+
+test('[invalid iss] verify', t => {
 	const jwt = sign({name: 'Rita'})
-	const isValid = verify(jwt, {iss: 'app:tex'})
+	const isValid = verify(jwt, {iss: 'xxx'})
+	t.false(isValid)
+})
+
+test('[invalid aud] verify', t => {
+	const jwt = sign({name: 'Jorge'}, {aud: 'http://jorge.in'})
+	const isValid = verify(jwt, {aud: 'http://lagden.in'})
 	t.false(isValid)
 })
 
