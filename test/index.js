@@ -25,6 +25,14 @@ test('[basic] sign, verify, parse and claims', t => {
 	t.is(payload.data.name, 'Lucas Tadashi')
 })
 
+test('do capeta', t => {
+	const jwt = sign({id: 37046, name: 'Thiago Lagden', corretora: 666}, {aud: 'http://127.0.0.1'})
+	const isValid = verify(jwt, {aud: 'http://127.0.0.1'})
+	const {payloadObj: payload} = parse(jwt)
+	t.true(isValid)
+	t.is(payload.data.corretora, 666)
+})
+
 test('[duration] sign, verify', async t => {
 	const jwt = sign({name: 'Sabrina Takamoto'}, {duration: 1})
 	await sleep(10)
