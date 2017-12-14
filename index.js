@@ -7,7 +7,7 @@
 const {jws: {JWS}} = require('jsrsasign')
 const uuidv4 = require('uuid/v4')
 const uuidv5 = require('uuid/v5')
-const debug = require('@tadashi/debug')
+const debug = require('@tadashi/debug')('tadashi-jwt')
 
 const {
 	TADASHI_SECRET_KEY_JWT = 'de66bd178d5abc9e848787b678f9b613',
