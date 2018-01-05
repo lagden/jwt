@@ -25,7 +25,7 @@ test('[basic] sign, verify, parse and claims', t => {
 	t.is(payload.data.name, 'Lucas Tadashi')
 })
 
-test('do capeta', t => {
+test('[666] sign, verify and parse', t => {
 	const jwt = sign({id: 37046, name: 'Thiago Lagden', corretora: 666}, {aud: 'http://127.0.0.1'})
 	const isValid = verify(jwt, {aud: 'http://127.0.0.1'})
 	const {payloadObj: payload} = parse(jwt)
@@ -33,7 +33,7 @@ test('do capeta', t => {
 	t.is(payload.data.corretora, 666)
 })
 
-test('[duration] sign, verify', async t => {
+test('[duration] timeout', async t => {
 	const jwt = sign({name: 'Sabrina Takamoto'}, {duration: 1})
 	await sleep(10)
 	const isValid = verify(jwt)
@@ -41,7 +41,7 @@ test('[duration] sign, verify', async t => {
 })
 
 test('[invalid iss] verify', t => {
-	const jwt = sign({name: 'Rita'})
+	const jwt = sign({name: 'Rita'}, {iss: 'app:xxx'})
 	const isValid = verify(jwt, {iss: 'xxx'})
 	t.false(isValid)
 })
@@ -52,7 +52,31 @@ test('[invalid aud] verify', t => {
 	t.false(isValid)
 })
 
-test('[JWT invalid] verify', t => {
+test('[empty aud] sign', t => {
+	const jwt = sign({name: 'Jorge'})
+	const isValid = verify(jwt, {aud: 'http://lagden.in'})
+	t.true(isValid)
+})
+
+test('[empty aud] verify', t => {
+	const jwt = sign({name: 'Jorge'}, {aud: 'http://jorge.in'})
+	const isValid = verify(jwt)
+	t.false(isValid)
+})
+
+test('[empty iss] sign', t => {
+	const jwt = sign({name: 'Rita'})
+	const isValid = verify(jwt, {iss: 'xxx'})
+	t.true(isValid)
+})
+
+test('[empty iss] verify', t => {
+	const jwt = sign({name: 'Rita'}, {iss: 'app:xxx'})
+	const isValid = verify(jwt)
+	t.false(isValid)
+})
+
+test('[invalid] verify', t => {
 	const isValid = verify('invalid')
 	t.false(isValid)
 })

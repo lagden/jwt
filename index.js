@@ -9,11 +9,30 @@ const uuidv4 = require('uuid/v4')
 const uuidv5 = require('uuid/v5')
 const debug = require('@tadashi/debug')('tadashi-jwt')
 
+/**
+ * Environment variables
+ * @constant {string}  [TADASHI_ALG='HS512']                                        - Algoritimo que será utilizado
+ */
+
+/**
+ * Environment variables
+ * @constant {string}  [TADASHI_CLAIM_AUD]                                          - Identifica os destinatários para os quais o JWT se destina
+ */
+
+/**
+ * Environment variables
+ * @constant {string}  [TADASHI_CLAIM_ISS]                                          - Identifica o app que fez a chamada
+ */
+
+/**
+ * Environment variables
+ * @constant {string}  [TADASHI_SECRET_KEY_JWT='de66bd178d5abc9e848787b678f9b613']  - Segredo utilizado na geração e validação do JWT
+ */
 const {
-	TADASHI_SECRET_KEY_JWT = 'de66bd178d5abc9e848787b678f9b613',
-	TADASHI_CLAIM_ISS = 'app:key',
-	TADASHI_CLAIM_AUD = false,
-	TADASHI_ALG = 'HS512'
+	TADASHI_ALG = 'HS512',
+	TADASHI_CLAIM_AUD,
+	TADASHI_CLAIM_ISS,
+	TADASHI_SECRET_KEY_JWT = 'de66bd178d5abc9e848787b678f9b613'
 } = process.env
 
 const secret = {utf8: TADASHI_SECRET_KEY_JWT}
@@ -36,10 +55,9 @@ function _jti() {
  *
  * @returns {string} aud
  */
-function _aud(jwt, aud) {
-	const {payloadObj: data} = parse(jwt)
-	if (data && data.aud && data.aud.includes(aud)) {
-		return data.aud
+function _checkAud(_aud, aud) {
+	if (Array.isArray(_aud) && _aud.includes(aud)) {
+		return _aud
 	}
 	return [aud]
 }
@@ -62,7 +80,10 @@ function sign(payload, options = {}) {
 	const tEnd = tNow + duration
 	const _payload = Object.create(null)
 
-	_payload.iss = [iss]
+	if (iss) {
+		_payload.iss = [iss]
+	}
+
 	if (aud) {
 		_payload.aud = String(aud).split(', ')
 	}
@@ -89,17 +110,19 @@ function sign(payload, options = {}) {
  * @returns {boolean}
  */
 function verify(jwt, options = {}) {
-	const {iss = false, aud = false} = options
-	const _claims = Object.create(null)
-	_claims.alg = [alg]
-	_claims.verifyAt = Date.now()
-	if (iss) {
-		_claims.iss = [iss]
-	}
-	if (aud) {
-		_claims.aud = _aud(jwt, aud)
-	}
 	try {
+		const {iss = false, aud = false} = options
+		const {payloadObj: data} = parse(jwt)
+		const {iss: _iss, aud: _aud} = data
+		const _claims = Object.create(null)
+		_claims.alg = [alg]
+		_claims.verifyAt = Date.now()
+		if (_iss) {
+			_claims.iss = [iss]
+		}
+		if (_aud) {
+			_claims.aud = _checkAud(_aud, aud)
+		}
 		return JWS.verifyJWT(jwt, secret, _claims)
 	} catch (err) {
 		debug.error('verifyJWT', err.message)
