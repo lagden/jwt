@@ -3,8 +3,6 @@
 [![NPM version][npm-img]][npm]
 [![Build Status][ci-img]][ci]
 [![Coverage Status][coveralls-img]][coveralls]
-[![Dependency Status][dep-img]][dep]
-[![devDependency Status][devDep-img]][devDep]
 
 [![XO code style][xo-img]][xo]
 [![Greenkeeper badge][greenkeeper-img]][greenkeeper]
@@ -16,10 +14,6 @@
 [ci]:              https://travis-ci.org/lagden/jwt
 [coveralls-img]:   https://coveralls.io/repos/github/lagden/jwt/badge.svg?branch=master
 [coveralls]:       https://coveralls.io/github/lagden/jwt?branch=master
-[dep-img]:         https://david-dm.org/lagden/jwt.svg
-[dep]:             https://david-dm.org/lagden/jwt
-[devDep-img]:      https://david-dm.org/lagden/jwt/dev-status.svg
-[devDep]:          https://david-dm.org/lagden/jwt#info=devDependencies
 [xo-img]:          https://img.shields.io/badge/code_style-XO-5ed9c7.svg
 [xo]:              https://github.com/sindresorhus/xo
 [greenkeeper-img]: https://badges.greenkeeper.io/lagden/jwt.svg
@@ -43,10 +37,10 @@ const {sign, verify, parse} = require('@tadashi/jwt')
 const jwt = sign({name: 'Lucas Tadashi'})
 // => eyJhbGciOiJIUz...
 
-const isValid = verify('eyJhbGciOiJIUz...', 'app:key', 'http://127.0.0.1')
+const valid = verify(jwt)
 // => true
 
-const {payloadObj: {data: {name}}} = parse('eyJhbGciOiJIUz...')
+const {payloadObj: {data: {name}}} = parse(jwt)
 // => Lucas Tadashi
 ```
 

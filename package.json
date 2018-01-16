@@ -1,6 +1,6 @@
 {
   "name": "@tadashi/jwt",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Generates, verifies and parses a JSON Web Token",
   "main": "index.js",
   "files": [
@@ -22,6 +22,9 @@
   ],
   "author": "Thiago Lagden",
   "license": "MIT",
+  "engines": {
+    "node": ">=8.9.1"
+  },
   "dependencies": {
     "@tadashi/debug": "2.0.0",
     "jsrsasign": "8.0.4",

@@ -16,22 +16,10 @@ const debug = require('@tadashi/debug')('tadashi-jwt')
 
 /**
  * Environment variables
- * @constant {string}  [TADASHI_CLAIM_AUD]                                          - Identifica os destinatários para os quais o JWT se destina
- */
-
-/**
- * Environment variables
- * @constant {string}  [TADASHI_CLAIM_ISS]                                          - Identifica o app que fez a chamada
- */
-
-/**
- * Environment variables
  * @constant {string}  [TADASHI_SECRET_KEY_JWT='de66bd178d5abc9e848787b678f9b613']  - Segredo utilizado na geração e validação do JWT
  */
 const {
 	TADASHI_ALG = 'HS512',
-	TADASHI_CLAIM_AUD,
-	TADASHI_CLAIM_ISS,
 	TADASHI_SECRET_KEY_JWT = 'de66bd178d5abc9e848787b678f9b613'
 } = process.env
 
@@ -65,15 +53,15 @@ function _checkAud(_aud, aud) {
 /**
  * Gera uma assinatura JWT (JSON Web Token)
  *
- * @param {(object|string)} payload                - Carga de dados
- * @param {object} [options={}]                    - Opções
- * @param {number} [options.duration=0]            - Tempo de duração do JWT em milisegundos
- * @param {string} [options.iss=TADASHI_CLAIM_ISS] - Identifica o app que fez a chamada
- * @param {string} [options.aud=TADASHI_CLAIM_AUD] - Identifica os destinatários para os quais o JWT se destina
+ * @param {(object|string)} payload      - Carga de dados
+ * @param {object} [options={}]          - Opções
+ * @param {number} [options.duration=0]  - Tempo de duração do JWT em milisegundos
+ * @param {string} [options.iss]         - Identifica o app que fez a chamada
+ * @param {string} [options.aud]         - Identifica os destinatários para os quais o JWT se destina
  * @returns {string} JWT
  */
 function sign(payload, options = {}) {
-	const {duration = 0, iss = TADASHI_CLAIM_ISS, aud = TADASHI_CLAIM_AUD} = options
+	const {duration = 0, iss, aud} = options
 	const _header = {alg, typ: 'JWT'}
 
 	const tNow = Date.now()
@@ -87,6 +75,7 @@ function sign(payload, options = {}) {
 	if (aud) {
 		_payload.aud = String(aud).split(', ')
 	}
+
 	_payload.nbf = tNow
 	_payload.iat = tNow
 	if (duration > 0) {
