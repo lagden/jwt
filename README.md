@@ -3,7 +3,6 @@
 [![NPM version][npm-img]][npm]
 [![Build Status][ci-img]][ci]
 [![Coverage Status][coveralls-img]][coveralls]
-
 [![XO code style][xo-img]][xo]
 [![Greenkeeper badge][greenkeeper-img]][greenkeeper]
 
