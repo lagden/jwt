@@ -13,11 +13,8 @@ const {matchClaims, parseJWT} = require('./lib/util')
 
 /**
  * Environment variables
- * @constant {string}  [TADASHI_ALG='HS512']                                        - Algoritimo que será utilizado
- */
-
-/**
- * Environment variables
+ * @constant {string}  [TADASHI_ALG='HS512']                                        - Algoritimo utilizado
+ * @constant {string}  [TADASHI_ALG_ACCEPTABLE='HS512 HS256']                       - Tipos de algoritimos aceitos na validação do JWT
  * @constant {string}  [TADASHI_SECRET_KEY_JWT='de66bd178d5abc9e848787b678f9b613']  - Segredo utilizado na geração e validação do JWT
  */
 const {
@@ -26,7 +23,6 @@ const {
 	TADASHI_SECRET_KEY_JWT = 'de66bd178d5abc9e848787b678f9b613'
 } = process.env
 
-const secret = {utf8: TADASHI_SECRET_KEY_JWT}
 const alg = TADASHI_ALG
 const algs = TADASHI_ALG_ACCEPTABLE
 
@@ -44,16 +40,17 @@ function _jti() {
 /**
  * Gera uma assinatura JWT (JSON Web Token)
  *
- * @param {(object|string)} payload      - Carga de dados
- * @param {object} [options={}]          - Opções
- * @param {number} [options.duration=0]  - Tempo de vida do JWT (em segundos)
- * @param {string} [options.iss]         - Identificador do servidor ou sistema que emite o JWT
- * @param {string} [options.aud]         - Identifica os destinatários deste JWT
- * @param {string} [options.sub]         - Identificador do usuário que este JWT representa
- * @param {string} [options.jti]         - JWT ID
+ * @param {(object|string)} payload                  - Carga de dados
+ * @param {object} [options={}]                      - Opções
+ * @param {number} [options.duration=0]              - Tempo de vida do JWT (em segundos)
+ * @param {string} [options.iss]                     - Identificador do servidor ou sistema que emite o JWT
+ * @param {string} [options.aud]                     - Identifica os destinatários deste JWT
+ * @param {string} [options.sub]                     - Identificador do usuário que este JWT representa
+ * @param {string} [options.jti]                     - JWT ID
+ * @param {string} [secret=TADASHI_SECRET_KEY_JWT]   - Opções (obligatory claims)
  * @returns {string} JWT
  */
-function sign(payload, options = {}) {
+function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 	const {duration = 0} = options
 	const _claims = ['jti', 'iss', 'aud', 'sub']
 	const _header = {alg, typ: 'JWT'}
@@ -79,7 +76,8 @@ function sign(payload, options = {}) {
 
 	const sHeader = JSON.stringify(_header)
 	const sPayload = JSON.stringify(_payload)
-	return JWS.sign(alg, sHeader, sPayload, secret)
+	const sSecret = {utf8: secret}
+	return JWS.sign(alg, sHeader, sPayload, sSecret)
 }
 
 /**
@@ -89,8 +87,9 @@ function sign(payload, options = {}) {
  * @param {object} [options={}]              - Opções (obligatory claims)
  * @returns {boolean}
  */
-function verify(jwt, options = {}) {
+function verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 	try {
+		const sSecret = {utf8: secret}
 		const fields = Object.keys(options)
 		const claims = Object.create(null)
 		fields.forEach(k => {
@@ -98,7 +97,7 @@ function verify(jwt, options = {}) {
 		})
 		claims.alg = algs.split(' ')
 		if (matchClaims(jwt, fields)) {
-			return JWS.verifyJWT(jwt, secret, claims)
+			return JWS.verifyJWT(jwt, sSecret, claims)
 		}
 		return false
 	} catch (err) {
