@@ -1,4 +1,4 @@
-# JWT [![JWT][jwt-img]][jwt]
+# JWT
 
 [![NPM version][npm-img]][npm]
 [![Build Status][ci-img]][ci]
@@ -20,6 +20,9 @@
 [greenkeeper-img]: https://badges.greenkeeper.io/lagden/jwt.svg
 [greenkeeper]:     https://greenkeeper.io/
 
+-----
+
+[![JWT][jwt-img]][jwt]
 
 Sign, verify and parse a JSON Web Token
 
