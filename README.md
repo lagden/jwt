@@ -1,4 +1,4 @@
-# jwt
+# JWT
 
 [![NPM version][npm-img]][npm]
 [![Build Status][ci-img]][ci]
@@ -21,9 +21,7 @@
 [greenkeeper]:     https://greenkeeper.io/
 
 
-[![JWT][jwt-img]][jwt]
-
-Sign, verify and parse a JSON Web Token
+Sign, verify and parse a JSON Web Token [![JWT][jwt-img]][jwt]
 
 ## Install
 
@@ -46,11 +44,6 @@ const valid = verify(jwt)
 const {payload: {data: {name}}} = parse(jwt)
 // => Lucas Tadashi
 ```
-
-
-## API
-
-[See documentation](https://lagden.github.io/jwt)
 
 
 ## License
