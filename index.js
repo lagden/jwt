@@ -2,12 +2,14 @@
  * Módulo JWT
  * @module index
  */
+
 'use strict'
 
 const {jws: {JWS}} = require('jsrsasign')
 const uuidv4 = require('uuid/v4')
 const uuidv5 = require('uuid/v5')
 const debug = require('@tadashi/debug')('tadashi-jwt')
+const {matchClaims, parseJWT} = require('./lib/util')
 
 /**
  * Environment variables
@@ -20,11 +22,13 @@ const debug = require('@tadashi/debug')('tadashi-jwt')
  */
 const {
 	TADASHI_ALG = 'HS512',
+	TADASHI_ALG_ACCEPTABLE = 'HS512 HS256',
 	TADASHI_SECRET_KEY_JWT = 'de66bd178d5abc9e848787b678f9b613'
 } = process.env
 
 const secret = {utf8: TADASHI_SECRET_KEY_JWT}
 const alg = TADASHI_ALG
+const algs = TADASHI_ALG_ACCEPTABLE
 
 /**
  * Helper para criação de um id único
@@ -38,50 +42,39 @@ function _jti() {
 }
 
 /**
- * Helper para validar `aud`
- * @private
- *
- * @returns {string} aud
- */
-function _checkAud(_aud, aud) {
-	if (Array.isArray(_aud) && _aud.includes(aud)) {
-		return _aud
-	}
-	return [aud]
-}
-
-/**
  * Gera uma assinatura JWT (JSON Web Token)
  *
  * @param {(object|string)} payload      - Carga de dados
  * @param {object} [options={}]          - Opções
- * @param {number} [options.duration=0]  - Tempo de duração do JWT em milisegundos
- * @param {string} [options.iss]         - Identifica o app que fez a chamada
- * @param {string} [options.aud]         - Identifica os destinatários para os quais o JWT se destina
+ * @param {number} [options.duration=0]  - Tempo de vida do JWT (em segundos)
+ * @param {string} [options.iss]         - Identificador do servidor ou sistema que emite o JWT
+ * @param {string} [options.aud]         - Identifica os destinatários deste JWT
+ * @param {string} [options.sub]         - Identificador do usuário que este JWT representa
+ * @param {string} [options.jti]         - JWT ID
  * @returns {string} JWT
  */
 function sign(payload, options = {}) {
-	const {duration = 0, iss, aud} = options
+	const {duration = 0} = options
+	const _claims = ['jti', 'iss', 'aud', 'sub']
 	const _header = {alg, typ: 'JWT'}
 
-	const tNow = Date.now()
+	const tNow = Math.floor(Date.now() / 1000)
 	const tEnd = tNow + duration
 	const _payload = Object.create(null)
 
-	if (iss) {
-		_payload.iss = [iss]
-	}
+	Object.keys(options).forEach(k => {
+		if (_claims.includes(k)) {
+			_payload[k] = options[k]
+		}
+	})
 
-	if (aud) {
-		_payload.aud = String(aud).split(', ')
-	}
-
-	_payload.nbf = tNow
-	_payload.iat = tNow
 	if (duration > 0) {
 		_payload.exp = tEnd
 	}
-	_payload.jti = _jti()
+
+	_payload.jti = _payload.jti || _jti()
+	_payload.iat = tNow
+	_payload.nbf = tNow
 	_payload.data = payload
 
 	const sHeader = JSON.stringify(_header)
@@ -90,29 +83,24 @@ function sign(payload, options = {}) {
 }
 
 /**
- * Verifica se a assinatura JWT (JSON Web Token) é válida
+ * Verifica se o JWT é válido
  *
- * @param {string} jwt                  - JWT (JSON Web Token)
- * @param {object} [options={}]         - Opções
- * @param {string} [options.iss=false]  - Identifica o app que fez a chamada
- * @param {string} [options.aud=false]  - Origem da chamada
+ * @param {string} jwt                       - JWT (JSON Web Token)
+ * @param {object} [options={}]              - Opções (obligatory claims)
  * @returns {boolean}
  */
 function verify(jwt, options = {}) {
 	try {
-		const {iss = false, aud = false} = options
-		const {payloadObj: data} = parse(jwt)
-		const {iss: _iss, aud: _aud} = data
-		const _claims = Object.create(null)
-		_claims.alg = [alg]
-		_claims.verifyAt = Date.now()
-		if (_iss) {
-			_claims.iss = [iss]
+		const fields = Object.keys(options)
+		const claims = Object.create(null)
+		fields.forEach(k => {
+			claims[k] = options[k].split(' ')
+		})
+		claims.alg = algs.split(' ')
+		if (matchClaims(jwt, fields)) {
+			return JWS.verifyJWT(jwt, secret, claims)
 		}
-		if (_aud) {
-			_claims.aud = _checkAud(_aud, aud)
-		}
-		return JWS.verifyJWT(jwt, secret, _claims)
+		return false
 	} catch (err) {
 		debug.error('verifyJWT', err.message)
 		return false
@@ -127,7 +115,7 @@ function verify(jwt, options = {}) {
  */
 function parse(jwt) {
 	try {
-		return JWS.parse(jwt)
+		return parseJWT(jwt)
 	} catch (err) {
 		debug.error('parseJWT', err.message)
 		return null

@@ -3,8 +3,10 @@
 [![NPM version][npm-img]][npm]
 [![Build Status][ci-img]][ci]
 [![Coverage Status][coveralls-img]][coveralls]
+
 [![XO code style][xo-img]][xo]
-[![Greenkeeper badge][greenkeeper-img]][greenkeeper]
+[![Greenkeeper][greenkeeper-img]][greenkeeper]
+[![JWT][jwt-img]][jwt]
 
 
 [npm-img]:         https://img.shields.io/npm/v/@tadashi/jwt.svg
@@ -15,11 +17,13 @@
 [coveralls]:       https://coveralls.io/github/lagden/jwt?branch=master
 [xo-img]:          https://img.shields.io/badge/code_style-XO-5ed9c7.svg
 [xo]:              https://github.com/sindresorhus/xo
+[jwt-img]:         http://jwt.io/img/badge-compatible.svg
+[jwt]:             http://jwt.io
 [greenkeeper-img]: https://badges.greenkeeper.io/lagden/jwt.svg
 [greenkeeper]:     https://greenkeeper.io/
 
 
-Generates, verifies and parses a JSON Web Token
+Sign, verify and parse a JSON Web Token
 
 ## Install
 
@@ -39,7 +43,7 @@ const jwt = sign({name: 'Lucas Tadashi'})
 const valid = verify(jwt)
 // => true
 
-const {payloadObj: {data: {name}}} = parse(jwt)
+const {payload: {data: {name}}} = parse(jwt)
 // => Lucas Tadashi
 ```
 
