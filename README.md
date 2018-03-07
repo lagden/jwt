@@ -3,10 +3,8 @@
 [![NPM version][npm-img]][npm]
 [![Build Status][ci-img]][ci]
 [![Coverage Status][coveralls-img]][coveralls]
-
 [![XO code style][xo-img]][xo]
 [![Greenkeeper][greenkeeper-img]][greenkeeper]
-[![JWT][jwt-img]][jwt]
 
 
 [npm-img]:         https://img.shields.io/npm/v/@tadashi/jwt.svg
@@ -22,6 +20,8 @@
 [greenkeeper-img]: https://badges.greenkeeper.io/lagden/jwt.svg
 [greenkeeper]:     https://greenkeeper.io/
 
+
+[![JWT][jwt-img]][jwt]
 
 Sign, verify and parse a JSON Web Token
 
