@@ -1,4 +1,4 @@
-# JWT
+# JWT [![JWT][jwt-img]][jwt]
 
 [![NPM version][npm-img]][npm]
 [![Build Status][ci-img]][ci]
@@ -21,7 +21,7 @@
 [greenkeeper]:     https://greenkeeper.io/
 
 
-Sign, verify and parse a JSON Web Token [![JWT][jwt-img]][jwt]
+Sign, verify and parse a JSON Web Token
 
 ## Install
 
