@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@tadashi/debug": "2.1.0",
-    "jsrsasign": "8.0.8",
+    "jsrsasign": "8.0.9",
     "uuid": "3.2.1"
   },
   "devDependencies": {
