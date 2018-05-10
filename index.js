@@ -40,14 +40,14 @@ function _jti() {
 /**
  * Gera uma assinatura JWT (JSON Web Token)
  *
- * @param {(object|string)} payload                  - Carga de dados
- * @param {object} [options={}]                      - Opções
- * @param {number} [options.duration=0]              - Tempo de vida do JWT (em segundos)
- * @param {string} [options.iss]                     - Identificador do servidor ou sistema que emite o JWT
- * @param {string} [options.aud]                     - Identifica os destinatários deste JWT
- * @param {string} [options.sub]                     - Identificador do usuário que este JWT representa
- * @param {string} [options.jti]                     - JWT ID
- * @param {string} [secret=TADASHI_SECRET_KEY_JWT]   - Opções (obligatory claims)
+ * @param {(object|string)} payload                 - Carga de dados
+ * @param {object} [options={}]                     - Opções
+ * @param {number} [options.duration=0]             - Tempo de vida do JWT (em segundos)
+ * @param {string} [options.iss]                    - Identificador do servidor ou sistema que emite o JWT
+ * @param {string} [options.aud]                    - Identifica os destinatários deste JWT
+ * @param {string} [options.sub]                    - Identificador do usuário que este JWT representa
+ * @param {string} [options.jti]                    - JWT ID
+ * @param {string} [secret=TADASHI_SECRET_KEY_JWT]  - Segredo para gerar o JWT
  * @returns {string} JWT
  */
 function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
@@ -83,8 +83,8 @@ function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 /**
  * Verifica se o JWT é válido
  *
- * @param {string} jwt                       - JWT (JSON Web Token)
- * @param {object} [options={}]              - Opções (obligatory claims)
+ * @param {string} jwt           - JWT (JSON Web Token)
+ * @param {object} [options={}]  - Opções (obligatory claims)
  * @returns {boolean}
  */
 function verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
