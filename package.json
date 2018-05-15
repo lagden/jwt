@@ -1,6 +1,6 @@
 {
   "name": "@tadashi/jwt",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Sign, verify and parse a JSON Web Token",
   "main": "index.js",
   "files": [
@@ -12,6 +12,7 @@
     "report": "nyc report --reporter=text-lcov | coveralls",
     "pretest": "xo",
     "test": "NODE_ENV=test ava",
+    "pretest-cov": "npm run pretest",
     "test-cov": "NODE_ENV=test nyc ava"
   },
   "keywords": [

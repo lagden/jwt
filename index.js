@@ -40,9 +40,10 @@ function _jti() {
 /**
  * Gera uma assinatura JWT (JSON Web Token)
  *
- * @param {(object|string)} payload                 - Carga de dados
+ * @param {object} payload                          - Carga de dados
  * @param {object} [options={}]                     - Opções
  * @param {number} [options.duration=0]             - Tempo de vida do JWT (em segundos)
+ * @param {number} [options.useData=true]           - Coloca o payload dentro da propriedade data
  * @param {string} [options.iss]                    - Identificador do servidor ou sistema que emite o JWT
  * @param {string} [options.aud]                    - Identifica os destinatários deste JWT
  * @param {string} [options.sub]                    - Identificador do usuário que este JWT representa
@@ -51,13 +52,20 @@ function _jti() {
  * @returns {string} JWT
  */
 function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
-	const {duration = 0} = options
+	const {duration = 0, useData = true} = options
 	const _claims = ['jti', 'iss', 'aud', 'sub']
 	const _header = {alg, typ: 'JWT'}
 
 	const tNow = Math.floor(Date.now() / 1000)
 	const tEnd = tNow + duration
-	const _payload = Object.create(null)
+
+	let _payload = Object.create(null)
+
+	if (useData) {
+		_payload.data = payload
+	} else {
+		_payload = payload
+	}
 
 	Object.keys(options).forEach(k => {
 		if (_claims.includes(k)) {
@@ -72,7 +80,6 @@ function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 	_payload.jti = _payload.jti || _jti()
 	_payload.iat = tNow
 	_payload.nbf = tNow
-	_payload.data = payload
 
 	const sHeader = JSON.stringify(_header)
 	const sPayload = JSON.stringify(_payload)

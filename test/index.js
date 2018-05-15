@@ -96,3 +96,9 @@ test('[no sig] parse', t => {
 	const obj = parse('eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJpc3MiOiJodHRwczovL2p3dC1pZHAuZXhhbXBsZS5jb20iLCJzdWIiOiJtYWlsdG86bWlrZUBleGFtcGxlLmNvbSIsIm5iZiI6MTUyMDM5MTEwMSwiZXhwIjoxNTIwMzk0NzAxLCJpYXQiOjE1MjAzOTExMDEsImp0aSI6ImlkMTIzNDU2IiwidHlwIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9yZWdpc3RlciJ9')
 	t.is(obj.header.alg, 'none')
 })
+
+test('[basic] noData', t => {
+	const jwt = sign({name: 'Sabrina Takamoto'}, {useData: false})
+	const isValid = verify(jwt)
+	t.true(isValid)
+})
