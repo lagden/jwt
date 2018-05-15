@@ -1,7 +1,7 @@
 'use strict'
 
 import test from 'ava'
-import {sign, verify, parse} from '../.'
+import {sign, verify, parse} from '..'
 
 function sleep(s) {
 	return new Promise(resolve => {

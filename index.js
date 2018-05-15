@@ -59,12 +59,14 @@ function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 	const tNow = Math.floor(Date.now() / 1000)
 	const tEnd = tNow + duration
 
-	let _payload = Object.create(null)
+	const _payload = Object.create(null)
 
 	if (useData) {
 		_payload.data = payload
 	} else {
-		_payload = payload
+		Object.keys(payload).forEach(k => {
+			_payload[k] = payload[k]
+		})
 	}
 
 	Object.keys(options).forEach(k => {
@@ -90,9 +92,10 @@ function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 /**
  * Verifica se o JWT é válido
  *
- * @param {string} jwt           - JWT (JSON Web Token)
- * @param {object} [options={}]  - Opções (obligatory claims)
- * @returns {boolean}
+ * @param {string} jwt                              - JWT (JSON Web Token)
+ * @param {object} [options={}]                     - Opções (obligatory claims)
+ * @param {string} [secret=TADASHI_SECRET_KEY_JWT]  - Segredo para gerar o JWT
+ * @returns {boolean} Retorna true ou false
  */
 function verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 	try {
