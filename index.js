@@ -44,6 +44,7 @@ function _jti() {
  * @param {object} [options={}]                     - Opções
  * @param {number} [options.duration=0]             - Tempo de vida do JWT (em segundos)
  * @param {number} [options.useData=true]           - Coloca o payload dentro da propriedade data
+ * @param {number} [options.useNbf=true]           - Coloca o payload dentro da propriedade data
  * @param {string} [options.iss]                    - Identificador do servidor ou sistema que emite o JWT
  * @param {string} [options.aud]                    - Identifica os destinatários deste JWT
  * @param {string} [options.sub]                    - Identificador do usuário que este JWT representa
@@ -52,7 +53,7 @@ function _jti() {
  * @returns {string} JWT
  */
 function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
-	const {duration = 0, useData = true} = options
+	const {duration = 0, useData = true, useNbf = true} = options
 	const _claims = ['jti', 'iss', 'aud', 'sub']
 	const _header = {alg, typ: 'JWT'}
 
@@ -81,7 +82,9 @@ function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 
 	_payload.jti = _payload.jti || _jti()
 	_payload.iat = tNow
-	_payload.nbf = tNow
+	if (useNbf) {
+		_payload.nbf = tNow
+	}
 
 	const sHeader = JSON.stringify(_header)
 	const sPayload = JSON.stringify(_payload)

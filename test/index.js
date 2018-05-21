@@ -102,3 +102,9 @@ test('[basic] noData', t => {
 	const isValid = verify(jwt)
 	t.true(isValid)
 })
+
+test('[basic] no nbf', t => {
+	const jwt = sign({name: 'Sabrina Takamoto'}, {useNbf: false})
+	const isValid = verify(jwt)
+	t.true(isValid)
+})
