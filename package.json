@@ -1,6 +1,6 @@
 {
   "name": "@tadashi/jwt",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Sign, verify and parse a JSON Web Token",
   "main": "index.js",
   "files": [
@@ -11,7 +11,7 @@
   "scripts": {
     "report": "nyc report --reporter=text-lcov | coveralls",
     "pretest": "xo",
-    "test": "DEBUG=tadashi-debug:* ava"
+    "test": "ava"
   },
   "keywords": [
     "jwt",
@@ -27,7 +27,6 @@
   "dependencies": {
     "debug": "3.1.0",
     "jsrsasign": "8.0.12",
-    "nyc": "12.0.2",
     "uuid": "3.2.1"
   },
   "devDependencies": {
