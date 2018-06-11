@@ -11,9 +11,7 @@
   "scripts": {
     "report": "nyc report --reporter=text-lcov | coveralls",
     "pretest": "xo",
-    "test": "NODE_ENV=test ava",
-    "pretest-cov": "npm run pretest",
-    "test-cov": "NODE_ENV=test nyc ava"
+    "test": "DEBUG=tadashi-debug:* ava"
   },
   "keywords": [
     "jwt",
@@ -27,14 +25,13 @@
     "node": ">=8.9.1"
   },
   "dependencies": {
-    "@tadashi/debug": "2.1.0",
+    "debug": "3.1.0",
     "jsrsasign": "8.0.12",
     "uuid": "3.2.1"
   },
   "devDependencies": {
     "ava": "0.25.0",
-    "nyc": "11.7.2",
-    "xo": "0.21.0"
+    "xo": "0.21.1"
   },
   "xo": {
     "envs": [

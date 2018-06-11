@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "8.0.0"
-  - "10.0.0"
-script: "npm run test-cov"
-after_script: "npm i coveralls@3.0.0 && npm run report"
+  - "8"
+  - "10"
+script: "npm i nyc && npx xo && npx nyc ava -t"
+after_script: "npm i coveralls && npm run report"

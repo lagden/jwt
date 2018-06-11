@@ -8,8 +8,11 @@
 const {jws: {JWS}} = require('jsrsasign')
 const uuidv4 = require('uuid/v4')
 const uuidv5 = require('uuid/v5')
-const debug = require('@tadashi/debug')('tadashi-jwt')
+const debug = require('debug')
 const {matchClaims, parseJWT} = require('./lib/util')
+
+const error = debug('tadashi-jwt:error')
+// const log = debug('tadashi-jwt:log')
 
 /**
  * Environment variables
@@ -114,7 +117,7 @@ function verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 		}
 		return false
 	} catch (err) {
-		debug.error('verifyJWT', err.message)
+		error('verifyJWT', err.message)
 		return false
 	}
 }
@@ -129,7 +132,7 @@ function parse(jwt) {
 	try {
 		return parseJWT(jwt)
 	} catch (err) {
-		debug.error('parseJWT', err.message)
+		error('parseJWT', err.message)
 		return null
 	}
 }
