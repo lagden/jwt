@@ -27,7 +27,7 @@
     "node": ">=8.9.1"
   },
   "dependencies": {
-    "@tadashi/debug": "2.1.0",
+    "@tadashi/debug": "3.0.0",
     "jsrsasign": "8.0.12",
     "uuid": "3.2.1"
   },
