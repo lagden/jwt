@@ -25,7 +25,7 @@
     "node": ">=8.9.1"
   },
   "dependencies": {
-    "debug": "3.1.0",
+    "debug": "3.2.1",
     "jsrsasign": "8.0.12",
     "uuid": "3.3.2"
   },
