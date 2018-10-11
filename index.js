@@ -11,7 +11,7 @@ const uuidv5 = require('uuid/v5')
 const debug = require('debug')
 const {matchClaims, parseJWT} = require('./lib/util')
 
-const error = debug('tadashi-jwt:error')
+const _error = debug('tadashi-jwt:error')
 // const log = debug('tadashi-jwt:log')
 
 /**
@@ -116,8 +116,8 @@ function verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 			return JWS.verifyJWT(jwt, sSecret, claims)
 		}
 		return false
-	} catch (err) {
-		error('verifyJWT', err.message)
+	} catch (error) {
+		_error('verifyJWT', error.message)
 		return false
 	}
 }
@@ -131,8 +131,8 @@ function verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 function parse(jwt) {
 	try {
 		return parseJWT(jwt)
-	} catch (err) {
-		error('parseJWT', err.message)
+	} catch (error) {
+		_error('parseJWT', error.message)
 		return null
 	}
 }
