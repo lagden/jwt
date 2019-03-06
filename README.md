@@ -5,6 +5,7 @@
 [![Coverage Status][coveralls-img]][coveralls]
 [![XO code style][xo-img]][xo]
 [![Greenkeeper][greenkeeper-img]][greenkeeper]
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flagden%2Fjwt.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flagden%2Fjwt?ref=badge_shield)
 
 
 [npm-img]:         https://img.shields.io/npm/v/@tadashi/jwt.svg
@@ -52,3 +53,6 @@ const {payload: {data: {name}}} = parse(jwt)
 ## License
 
 MIT © [Thiago Lagden](http://lagden.in)
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flagden%2Fjwt.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flagden%2Fjwt?ref=badge_large)
