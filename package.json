@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "report": "nyc report --reporter=text-lcov | coveralls",
-    "pretest": "xo",
+    "pretest": "npx xo",
     "test": "ava"
   },
   "keywords": [
@@ -30,8 +30,7 @@
     "uuid": "3.3.2"
   },
   "devDependencies": {
-    "ava": "1.3.0",
-    "xo": "0.24.0"
+    "ava": "2.2.0"
   },
   "xo": {
     "envs": [

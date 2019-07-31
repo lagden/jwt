@@ -115,6 +115,7 @@ function verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 		if (matchClaims(jwt, fields)) {
 			return JWS.verifyJWT(jwt, sSecret, claims)
 		}
+
 		return false
 	} catch (error) {
 		_error('verifyJWT', error.message)
