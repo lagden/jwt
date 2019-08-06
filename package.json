@@ -1,6 +1,6 @@
 {
   "name": "@tadashi/jwt",
-  "version": "2.4.0",
+  "version": "3.0.0",
   "description": "Sign, verify and parse a JSON Web Token",
   "main": "index.js",
   "files": [
@@ -25,9 +25,9 @@
     "node": ">=8.9.1"
   },
   "dependencies": {
+    "@tadashi/hex-id": "1.1.0",
     "debug": "4.1.1",
-    "jsrsasign": "8.0.12",
-    "uuid": "3.3.2"
+    "jsrsasign": "8.0.12"
   },
   "devDependencies": {
     "ava": "2.2.0"

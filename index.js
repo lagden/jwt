@@ -6,8 +6,7 @@
 'use strict'
 
 const {jws: {JWS}} = require('jsrsasign')
-const uuidv4 = require('uuid/v4')
-const uuidv5 = require('uuid/v5')
+const hexid = require('@tadashi/hex-id')
 const debug = require('debug')
 const {matchClaims, parseJWT} = require('./lib/util')
 
@@ -28,17 +27,6 @@ const {
 
 const alg = TADASHI_ALG
 const algs = TADASHI_ALG_ACCEPTABLE
-
-/**
- * Helper para criação de um id único
- * @private
- *
- * @returns {string} UUID V5
- */
-function _jti() {
-	const NAMESPACE = uuidv4()
-	return uuidv5(`tadashi_${Number(Date.now()).toString(26)}`, NAMESPACE)
-}
 
 /**
  * Gera uma assinatura JWT (JSON Web Token)
@@ -83,7 +71,10 @@ function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 		_payload.exp = tEnd
 	}
 
-	_payload.jti = _payload.jti || _jti()
+	if (_payload.jti === true) {
+		_payload.jti = hexid()
+	}
+
 	_payload.iat = tNow
 	if (useNbf) {
 		_payload.nbf = tNow
