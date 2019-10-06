@@ -98,13 +98,13 @@ test('[no sig] parse', t => {
 })
 
 test('[basic] noData', t => {
-	const jwt = sign({name: 'Sabrina Takamoto'}, {useData: false})
+	const jwt = sign({jti: 37046, name: 'Sabrina Takamoto'}, {useData: false})
 	const isValid = verify(jwt)
 	t.true(isValid)
 })
 
 test('[basic] no nbf', t => {
-	const jwt = sign({name: 'Sabrina Takamoto'}, {useNbf: false})
+	const jwt = sign({name: 'Sabrina Takamoto'}, {jti: true, useNbf: false})
 	const isValid = verify(jwt)
 	t.true(isValid)
 })
