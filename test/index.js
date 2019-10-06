@@ -108,3 +108,10 @@ test('[basic] no nbf', t => {
 	const isValid = verify(jwt)
 	t.true(isValid)
 })
+
+test('[gracePeriod] validation', async t => {
+	const jwt = sign({name: 'Sabrina Takamoto'}, {duration: 0.5})
+	await sleep(1)
+	const isValid = verify(jwt, {gracePeriod: 3})
+	t.true(isValid)
+})

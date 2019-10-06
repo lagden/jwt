@@ -35,7 +35,7 @@ const algs = TADASHI_ALG_ACCEPTABLE
  * @param {object} [options={}]                     - Opções
  * @param {number} [options.duration=0]             - Tempo de vida do JWT (em segundos)
  * @param {number} [options.useData=true]           - Coloca o payload dentro da propriedade data
- * @param {number} [options.useNbf=true]           - Coloca o payload dentro da propriedade data
+ * @param {number} [options.useNbf=true]            - Tempo de validade do carga
  * @param {string} [options.iss]                    - Identificador do servidor ou sistema que emite o JWT
  * @param {string} [options.aud]                    - Identifica os destinatários deste JWT
  * @param {string} [options.sub]                    - Identificador do usuário que este JWT representa
@@ -89,6 +89,8 @@ function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 /**
  * Verifica se o JWT é válido
  *
+ * É possível passar via `options` o `gracePeriod`  - Diferença de tempo aceitável entre signatário e verificador em segundos
+ *
  * @param {string} jwt                              - JWT (JSON Web Token)
  * @param {object} [options={}]                     - Opções (obligatory claims)
  * @param {string} [secret=TADASHI_SECRET_KEY_JWT]  - Segredo para gerar o JWT
@@ -99,12 +101,18 @@ function verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 		const sSecret = {utf8: secret}
 		const fields = Object.keys(options)
 		const claims = Object.create(null)
+		const xtras = Object.create(null)
+		const ignoreSplit = ['gracePeriod']
 		fields.forEach(k => {
-			claims[k] = options[k].split(' ')
+			if (ignoreSplit.includes(k)) {
+				xtras[k] = options[k]
+			} else {
+				claims[k] = options[k].split(' ')
+			}
 		})
 		claims.alg = algs.split(' ')
-		if (matchClaims(jwt, fields)) {
-			return JWS.verifyJWT(jwt, sSecret, claims)
+		if (matchClaims(jwt, fields.filter(v => !ignoreSplit.includes(v)))) {
+			return JWS.verifyJWT(jwt, sSecret, {...claims, ...xtras})
 		}
 
 		return false

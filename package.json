@@ -1,6 +1,6 @@
 {
   "name": "@tadashi/jwt",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Sign, verify and parse a JSON Web Token",
   "main": "index.js",
   "files": [
@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "report": "nyc report --reporter=text-lcov | coveralls",
-    "pretest": "npx xo",
+    "pretest": "xo",
     "test": "ava"
   },
   "keywords": [
@@ -25,12 +25,13 @@
     "node": ">=8.9.1"
   },
   "dependencies": {
-    "@tadashi/hex-id": "1.1.0",
+    "@tadashi/hex-id": "1.1.1",
     "debug": "4.1.1",
     "jsrsasign": "8.0.12"
   },
   "devDependencies": {
-    "ava": "2.2.0"
+    "ava": "2.4.0",
+    "xo": "0.25.3"
   },
   "xo": {
     "envs": [
