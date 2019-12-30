@@ -3,6 +3,8 @@
 import test from 'ava'
 import {sign, verify, parse} from '..'
 
+// console.log(sign, verify, parse)
+
 function sleep(s) {
 	return new Promise(resolve => {
 		setTimeout(() => {
@@ -13,78 +15,62 @@ function sleep(s) {
 
 test('[basic] sign, verify', t => {
 	const jwt = sign({name: 'Sabrina Takamoto'})
-	const isValid = verify(jwt)
-	t.true(isValid)
+	const payload = verify(jwt)
+	t.is(payload.data.name, 'Sabrina Takamoto')
 })
 
 test('[more] sign, verify, parse and claims', t => {
-	const jwt = sign({name: 'Lucas Tadashi'}, {iss: 'app:xxx', aud: 'http://127.0.0.2'})
-	const isValid = verify(jwt, {iss: 'app:xxx', aud: 'http://127.0.0.2 http://127.0.0.3'})
-	const {payload} = parse(jwt)
-	t.true(isValid)
+	const jwt = sign({name: 'Lucas Tadashi'}, {aud: ['app:xxx', 'app:yyy'], iss: 'http://127.0.0.2'})
+	const payload = verify(jwt, {audience: 'app:xxx'})
 	t.is(payload.data.name, 'Lucas Tadashi')
 })
 
 test('[666] sign, verify and parse', t => {
-	const jwt = sign({id: 37046, name: 'Thiago Lagden', corretora: 666}, {aud: 'http://127.0.0.1'})
-	const isValid = verify(jwt, {aud: 'http://127.0.0.1'})
-	const {payload} = parse(jwt)
-	t.true(isValid)
+	const jwt = sign({id: 37046, name: 'Thiago Lagden', corretora: 666}, {iss: 'http://127.0.0.1'})
+	const payload = verify(jwt, {issuer: 'http://127.0.0.1'})
 	t.is(payload.data.corretora, 666)
 })
 
 test('[duration] timeout', async t => {
-	const jwt = sign({name: 'Sabrina Takamoto'}, {duration: 0.5})
-	await sleep(1)
-	const isValid = verify(jwt)
-	t.false(isValid)
-})
-
-test('[invalid iss] verify', t => {
-	const jwt = sign({name: 'Rita'}, {iss: 'app:xxx'})
-	const isValid = verify(jwt, {iss: 'xxx'})
-	t.false(isValid)
+	const jwt = sign({name: 'Sabrina Takamoto'}, {duration: 1})
+	await sleep(2)
+	const payload = verify(jwt)
+	t.false(payload)
 })
 
 test('[invalid aud] verify', t => {
-	const jwt = sign({name: 'Jorge'}, {aud: 'http://jorge.in'})
-	const isValid = verify(jwt, {aud: 'http://lagden.in'})
-	t.false(isValid)
+	const jwt = sign({name: 'Rita'}, {aud: 'app:xxx'})
+	const payload = verify(jwt, {audience: 'xxx'})
+	t.false(payload)
 })
 
-test('[empty aud] sign', t => {
+test('[invalid iss] verify', t => {
+	const jwt = sign({name: 'Jorge'}, {iss: 'http://jorge.in'})
+	const payload = verify(jwt, {issuer: 'http://lagden.in'})
+	t.false(payload)
+})
+
+test('[empty claim] sign', t => {
 	const jwt = sign({name: 'Jorge'})
-	const isValid = verify(jwt, {aud: 'http://jorge.in'})
-	t.false(isValid)
+	const payload = verify(jwt, {issuer: 'http://jorge.in'})
+	t.false(payload)
 })
 
-test('[empty aud] verify', t => {
-	const jwt = sign({name: 'Jorge'}, {aud: 'http://jorge.in'})
-	const isValid = verify(jwt)
-	t.true(isValid)
+test('[empty claim] verify', t => {
+	const jwt = sign({name: 'Jorge'}, {iss: 'http://jorge.in'})
+	const payload = verify(jwt)
+	t.is(payload.data.name, 'Jorge')
 })
 
-test('[empty iss] sign', t => {
-	const jwt = sign({name: 'Rita'})
-	const isValid = verify(jwt, {iss: 'xxx'})
-	t.false(isValid)
-})
-
-test('[empty iss] verify', t => {
-	const jwt = sign({name: 'Rita'}, {iss: 'app:xxx'})
-	const isValid = verify(jwt)
-	t.true(isValid)
-})
-
-test('[missing] aud', t => {
-	const jwt = sign({name: 'Lucas Tadashi'}, {iss: 'app:xxx'})
-	const isValid = verify(jwt, {iss: 'app:xxx', aud: 'http://127.0.0.2'})
-	t.false(isValid)
+test('[missing] iss', t => {
+	const jwt = sign({name: 'Lucas Tadashi'}, {aud: 'app:xxx'})
+	const payload = verify(jwt, {audience: 'app:xxx', issuer: 'http://127.0.0.2'})
+	t.false(payload)
 })
 
 test('[invalid] verify', t => {
-	const isValid = verify('invalid')
-	t.false(isValid)
+	const payload = verify('invalid')
+	t.false(payload)
 })
 
 test('[invalid] parse', t => {
@@ -94,24 +80,24 @@ test('[invalid] parse', t => {
 
 test('[no sig] parse', t => {
 	const obj = parse('eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJpc3MiOiJodHRwczovL2p3dC1pZHAuZXhhbXBsZS5jb20iLCJzdWIiOiJtYWlsdG86bWlrZUBleGFtcGxlLmNvbSIsIm5iZiI6MTUyMDM5MTEwMSwiZXhwIjoxNTIwMzk0NzAxLCJpYXQiOjE1MjAzOTExMDEsImp0aSI6ImlkMTIzNDU2IiwidHlwIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9yZWdpc3RlciJ9')
-	t.is(obj.header.alg, 'none')
+	t.is(obj, null)
 })
 
 test('[basic] noData', t => {
-	const jwt = sign({jti: 37046, name: 'Sabrina Takamoto'}, {useData: false})
-	const isValid = verify(jwt)
-	t.true(isValid)
+	const jwt = sign({name: 'Sabrina Takamoto'}, {jti: '37046', useData: false})
+	const payload = verify(jwt)
+	t.is(payload.name, 'Sabrina Takamoto')
 })
 
 test('[basic] no nbf', t => {
-	const jwt = sign({name: 'Sabrina Takamoto'}, {jti: true, useNbf: false})
-	const isValid = verify(jwt)
-	t.true(isValid)
+	const jwt = sign({name: 'Sabrina Takamoto'}, {jti: true, ignoreNbf: true})
+	const payload = verify(jwt)
+	t.is(payload.data.name, 'Sabrina Takamoto')
 })
 
-test('[gracePeriod] validation', async t => {
-	const jwt = sign({name: 'Sabrina Takamoto'}, {duration: 0.5})
-	await sleep(1)
-	const isValid = verify(jwt, {gracePeriod: 3})
-	t.true(isValid)
+test('[clockTolerance] validation', async t => {
+	const jwt = sign({name: 'Sabrina Takamoto'}, {duration: 1})
+	await sleep(2)
+	const payload = verify(jwt, {clockTolerance: '2s'})
+	t.is(payload.data.name, 'Sabrina Takamoto')
 })

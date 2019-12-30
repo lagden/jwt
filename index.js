@@ -5,67 +5,91 @@
 
 'use strict'
 
-const {jws: {JWS}} = require('jsrsasign')
+const {JWT, JWK} = require('jose')
 const hexid = require('@tadashi/hex-id')
 const debug = require('debug')
-const {matchClaims, parseJWT} = require('./lib/util')
 
 const _error = debug('tadashi-jwt:error')
-// const log = debug('tadashi-jwt:log')
+const _log = debug('tadashi-jwt:log')
 
 /**
  * Environment variables
  * @constant {string}  [TADASHI_ALG='HS512']                                        - Algoritimo utilizado
- * @constant {string}  [TADASHI_ALG_ACCEPTABLE='HS512 HS256']                       - Tipos de algoritimos aceitos na validação do JWT
  * @constant {string}  [TADASHI_SECRET_KEY_JWT='de66bd178d5abc9e848787b678f9b613']  - Segredo utilizado na geração e validação do JWT
  */
 const {
 	TADASHI_ALG = 'HS512',
-	TADASHI_ALG_ACCEPTABLE = 'HS512 HS256',
 	TADASHI_SECRET_KEY_JWT = 'de66bd178d5abc9e848787b678f9b613'
 } = process.env
 
-const alg = TADASHI_ALG
-const algs = TADASHI_ALG_ACCEPTABLE
+function _match(payload, options) {
+	const mapClaims = new Map()
+	mapClaims.set('audience', 'aud')
+	mapClaims.set('issuer', 'iss')
+	mapClaims.set('jti', 'jti')
+	mapClaims.set('subject', 'sub')
+
+	const claims = []
+	for (const k of Object.keys(options)) {
+		if (mapClaims.has(k)) {
+			claims.push(mapClaims.get(k))
+		}
+	}
+
+	const payloadKeys = Object.keys(payload)
+	return claims.every(claim => payloadKeys.includes(claim))
+}
 
 /**
  * Gera uma assinatura JWT (JSON Web Token)
  *
- * @param {object} payload                          - Carga de dados
- * @param {object} [options={}]                     - Opções
- * @param {number} [options.duration=0]             - Tempo de vida do JWT (em segundos)
- * @param {number} [options.useData=true]           - Coloca o payload dentro da propriedade data
- * @param {number} [options.useNbf=true]            - Tempo de validade do carga
- * @param {string} [options.iss]                    - Identificador do servidor ou sistema que emite o JWT
- * @param {string} [options.aud]                    - Identifica os destinatários deste JWT
- * @param {string} [options.sub]                    - Identificador do usuário que este JWT representa
- * @param {string} [options.jti]                    - JWT ID
- * @param {string} [secret=TADASHI_SECRET_KEY_JWT]  - Segredo para gerar o JWT
+ * @param {object}  payload                          - Carga de dados
+ * @param {object}  [options={}]                     - Opções
+ * @param {number}  [options.duration=0]             - Tempo de vida do JWT (em segundos)
+ * @param {number}  [options.useData=true]           - Coloca o payload dentro da propriedade "data"
+ * @param {number}  [options.ignoreNbf=false]        - Tempo de validade do token - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.5)
+ * @param {number}  [options.ignoreIat=false]        - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.6)
+ * @param {string}  [options.iss]                    - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.1)
+ * @param {string}  [options.sub]                    - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.2)
+ * @param {string}  [options.aud]                    - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.3)
+ * @param {boolean} [options.iat]                    - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.6)
+ * @param {string}  [options.jti]                    - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.7)
+ * @param {string}  [options.typ=JWT]                - Tipo do token - Header (https://tools.ietf.org/html/rfc7519#section-5.1)
+ * @param {string}  [options.alg=HS512]              - Algoritimo utilizado para gerar o token
+ * @param {string}  [secret=TADASHI_SECRET_KEY_JWT]  - Segredo de validação do token
  * @returns {string} JWT
  */
 function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
-	const {duration = 0, useData = true, useNbf = true} = options
-	const _claims = ['jti', 'iss', 'aud', 'sub']
-	const _header = {alg, typ: 'JWT'}
+	const {
+		typ = 'JWT',
+		alg = TADASHI_ALG,
+		duration = 0,
+		useData = true,
+		ignoreNbf = false,
+		ignoreIat = false
+	} = options
 
 	const tNow = Math.floor(Date.now() / 1000)
 	const tEnd = tNow + duration
 
-	const _payload = Object.create(null)
-
-	if (useData) {
-		_payload.data = payload
-	} else {
-		Object.keys(payload).forEach(k => {
-			_payload[k] = payload[k]
-		})
+	let _payload = {}
+	const _claims = ['jti', 'iss', 'aud', 'sub', 'iat']
+	const _options = {
+		algorithm: alg,
+		header: {typ}
 	}
 
-	Object.keys(options).forEach(k => {
+	if (useData) {
+		_payload.data = {...payload}
+	} else {
+		_payload = {...payload}
+	}
+
+	for (const k of Object.keys(options)) {
 		if (_claims.includes(k)) {
 			_payload[k] = options[k]
 		}
-	})
+	}
 
 	if (duration > 0) {
 		_payload.exp = tEnd
@@ -75,51 +99,47 @@ function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 		_payload.jti = hexid()
 	}
 
-	_payload.iat = tNow
-	if (useNbf) {
-		_payload.nbf = tNow
-	}
+	_options.ignoreIat = ignoreIat
+	_options.ignoreNbf = ignoreNbf
+	_options.algorithm = alg
+	_options.header = {typ}
 
-	const sHeader = JSON.stringify(_header)
-	const sPayload = JSON.stringify(_payload)
-	const sSecret = {utf8: secret}
-	return JWS.sign(alg, sHeader, sPayload, sSecret)
+	const _key = JWK.asKey({
+		kty: 'oct',
+		k: secret
+	})
+
+	_log('sign -> _options', _options)
+
+	return JWT.sign(_payload, _key, _options)
 }
 
 /**
  * Verifica se o JWT é válido
  *
- * É possível passar via `options` o `gracePeriod`  - Diferença de tempo aceitável entre signatário e verificador em segundos
+ * É possível passar via `options` o `clockTolerance`  - Diferença de tempo aceitável entre signatário e verificador em segundos
  *
- * @param {string} jwt                              - JWT (JSON Web Token)
- * @param {object} [options={}]                     - Opções (obligatory claims)
- * @param {string} [secret=TADASHI_SECRET_KEY_JWT]  - Segredo para gerar o JWT
+ * @param {string} jwt                                 - JSON Web Token
+ * @param {object} [options={}]                        - Opções (https://github.com/panva/jose/blob/master/docs/README.md#jwtverifytoken-keyorstore-options)
+ * @param {string} [secret=TADASHI_SECRET_KEY_JWT]     - Segredo para gerar o JWT
  * @returns {boolean} Retorna true ou false
+ * @returns {(boolean|string)} JWT Payload or false.
  */
 function verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 	try {
-		const sSecret = {utf8: secret}
-		const fields = Object.keys(options)
-		const claims = Object.create(null)
-		const xtras = Object.create(null)
-		const ignoreSplit = ['gracePeriod']
-		fields.forEach(k => {
-			if (ignoreSplit.includes(k)) {
-				xtras[k] = options[k]
-			} else {
-				claims[k] = options[k].split(' ')
-			}
-		})
-		claims.alg = algs.split(' ')
-		if (matchClaims(jwt, fields.filter(v => !ignoreSplit.includes(v)))) {
-			return JWS.verifyJWT(jwt, sSecret, {...claims, ...xtras})
+		const _key = JWK.asKey({kty: 'oct', k: secret})
+		const payload = JWT.verify(jwt, _key, options)
+
+		if (_match(payload, options) === true) {
+			return payload
 		}
 
-		return false
+		throw new Error('Claims didn\'t match')
 	} catch (error) {
-		_error('verifyJWT', error.message)
-		return false
+		_error('verify', error.message)
 	}
+
+	return false
 }
 
 /**
@@ -130,11 +150,12 @@ function verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
  */
 function parse(jwt) {
 	try {
-		return parseJWT(jwt)
+		return JWT.decode(jwt, {complete: false})
 	} catch (error) {
-		_error('parseJWT', error.message)
-		return null
+		_error('parse', error.message)
 	}
+
+	return null
 }
 
 exports.sign = sign
