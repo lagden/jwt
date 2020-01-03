@@ -17,13 +17,13 @@ test('[basic] sign, verify', t => {
 	t.is(payload.data.name, 'Sabrina Takamoto')
 })
 
-test('[more] sign, verify, parse and claims', t => {
+test('[more] sign, verify, and claims', t => {
 	const jwt = sign({name: 'Lucas Tadashi'}, {aud: ['app:xxx', 'app:yyy'], iss: 'http://127.0.0.2'})
 	const payload = verify(jwt, {audience: 'app:xxx'})
 	t.is(payload.data.name, 'Lucas Tadashi')
 })
 
-test('[666] sign, verify and parse', t => {
+test('[666] sign and verify', t => {
 	const jwt = sign({id: 37046, name: 'Thiago Lagden', corretora: 666}, {iss: 'http://127.0.0.1'})
 	const payload = verify(jwt, {issuer: 'http://127.0.0.1'})
 	t.is(payload.data.corretora, 666)
@@ -79,6 +79,11 @@ test('[invalid] parse', t => {
 test('[no sig] parse', t => {
 	const obj = parse('eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJpc3MiOiJodHRwczovL2p3dC1pZHAuZXhhbXBsZS5jb20iLCJzdWIiOiJtYWlsdG86bWlrZUBleGFtcGxlLmNvbSIsIm5iZiI6MTUyMDM5MTEwMSwiZXhwIjoxNTIwMzk0NzAxLCJpYXQiOjE1MjAzOTExMDEsImp0aSI6ImlkMTIzNDU2IiwidHlwIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9yZWdpc3RlciJ9')
 	t.is(obj, null)
+})
+
+test('[ok] parse', t => {
+	const {data: {name}} = parse('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJkYXRhIjp7Im5hbWUiOiJTYWJyaW5hIFRha2Ftb3RvIn0sImlhdCI6MTU3ODAyNTAwMH0.-lfGV42N3p1aAQjFCbdVOaqgbHcv3PndY1Eiv2CF_WRFKW2_4YA-N_o3bxV_iKZ1RkUeZcVUgx7IhhE_rCZBfA')
+	t.is(name, 'Sabrina Takamoto')
 })
 
 test('[basic] noData', t => {

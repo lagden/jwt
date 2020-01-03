@@ -27,6 +27,7 @@
 
 Sign, verify and parse a JSON Web Token
 
+
 ## Install
 
 ```
@@ -42,10 +43,10 @@ const {sign, verify, parse} = require('@tadashi/jwt')
 const jwt = sign({name: 'Lucas Tadashi'})
 // => eyJhbGciOiJIUz...
 
-const valid = verify(jwt)
-// => true
+const obj = verify(jwt)
+// => {data: {name: 'Lucas Tadashi'}, iat: 1578024700}
 
-const {payload: {data: {name}}} = parse(jwt)
+const {data: {name}} = parse(jwt)
 // => Lucas Tadashi
 ```
 
