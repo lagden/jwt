@@ -53,14 +53,13 @@ function _match(payload, options) {
  *
  * @param {object}  payload                          - Carga de dados
  * @param {object}  [options={}]                     - Opções
- * @param {number}  [options.duration=0]             - Tempo de vida do JWT (em segundos)
  * @param {number}  [options.useData=true]           - Coloca o payload dentro da propriedade "data"
- * @param {number}  [options.ignoreNbf=false]        - Tempo de validade do token - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.5)
- * @param {number}  [options.ignoreIat=false]        - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.6)
  * @param {string}  [options.iss]                    - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.1)
  * @param {string}  [options.sub]                    - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.2)
  * @param {string}  [options.aud]                    - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.3)
- * @param {boolean} [options.iat]                    - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.6)
+ * @param {number}  [options.duration=0]             - Tempo de expiração (em segundos) (https://tools.ietf.org/html/rfc7519#section-4.1.4)
+ * @param {number}  [options.ignoreNbf=false]        - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.5)
+ * @param {number}  [options.ignoreIat=false]        - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.6)
  * @param {string}  [options.jti]                    - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.7)
  * @param {string}  [options.typ=JWT]                - Tipo do token - Header (https://tools.ietf.org/html/rfc7519#section-5.1)
  * @param {string}  [options.alg=HS512]              - Algoritimo utilizado para gerar o token
@@ -130,8 +129,7 @@ function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
  * @param {string} jwt                                 - JSON Web Token
  * @param {object} [options={}]                        - Opções (https://github.com/panva/jose/blob/master/docs/README.md#jwtverifytoken-keyorstore-options)
  * @param {string} [secret=TADASHI_SECRET_KEY_JWT]     - Segredo para gerar o JWT
- * @returns {boolean} Retorna true ou false
- * @returns {(boolean|string)} JWT Payload or false.
+ * @returns {?object} O objeto completo ou null
  */
 function verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 	try {
@@ -147,14 +145,14 @@ function verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 		_error('verify', error.message)
 	}
 
-	return false
+	return null
 }
 
 /**
  * Faz o parse do JWT (JSON Web Token)
  *
  * @param {string} jwt - JWT (JSON Web Token)
- * @returns {?object} O objeto contendo o cabeçalho e carga de dados
+ * @returns {?object)} O objeto somente com a carga ou null
  */
 function parse(jwt) {
 	try {

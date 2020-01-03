@@ -33,25 +33,25 @@ test('[duration] timeout', async t => {
 	const jwt = sign({name: 'Sabrina Takamoto'}, {duration: 1})
 	await sleep(2)
 	const payload = verify(jwt)
-	t.false(payload)
+	t.is(payload, null)
 })
 
 test('[invalid aud] verify', t => {
 	const jwt = sign({name: 'Rita'}, {aud: 'app:xxx'})
 	const payload = verify(jwt, {audience: 'xxx'})
-	t.false(payload)
+	t.is(payload, null)
 })
 
 test('[invalid iss] verify', t => {
 	const jwt = sign({name: 'Jorge'}, {iss: 'http://jorge.in'})
 	const payload = verify(jwt, {issuer: 'http://lagden.in'})
-	t.false(payload)
+	t.is(payload, null)
 })
 
 test('[empty claim] sign', t => {
 	const jwt = sign({name: 'Jorge'})
 	const payload = verify(jwt, {issuer: 'http://jorge.in'})
-	t.false(payload)
+	t.is(payload, null)
 })
 
 test('[empty claim] verify', t => {
@@ -63,12 +63,12 @@ test('[empty claim] verify', t => {
 test('[missing] iss', t => {
 	const jwt = sign({name: 'Lucas Tadashi'}, {aud: 'app:xxx'})
 	const payload = verify(jwt, {audience: 'app:xxx', issuer: 'http://127.0.0.2'})
-	t.false(payload)
+	t.is(payload, null)
 })
 
 test('[invalid] verify', t => {
 	const payload = verify('invalid')
-	t.false(payload)
+	t.is(payload, null)
 })
 
 test('[invalid] parse', t => {
@@ -102,5 +102,5 @@ test('[clockTolerance] validation', async t => {
 	// times up
 	await sleep(2)
 	const payload2 = verify(jwt, {clockTolerance: '2s'})
-	t.false(payload2)
+	t.is(payload2, null)
 })
