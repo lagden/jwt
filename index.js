@@ -85,7 +85,7 @@ function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 	_options.algorithm = alg
 	_options.header = {typ}
 
-	const _key = JWK.asKey({kty: 'oct', k: secret})
+	const _key = JWK.asKey(Buffer.from(secret))
 
 	_log('sign -> _options', _options)
 
@@ -104,7 +104,7 @@ function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
  */
 function verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 	try {
-		const _key = JWK.asKey({kty: 'oct', k: secret})
+		const _key = JWK.asKey(Buffer.from(secret))
 		return JWT.verify(jwt, _key, options)
 	} catch (error) {
 		_error('verify', error.message)

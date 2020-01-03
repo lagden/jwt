@@ -29,6 +29,12 @@ test('[666] sign and verify', t => {
 	t.is(payload.data.corretora, 666)
 })
 
+test('[old jwt] verify', t => {
+	const jwt = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjozNzA0NiwibmFtZSI6IlRoaWFnbyBMYWdkZW4iLCJlbXByZXNhIjo4LCJ1bmlkYWRlIjoxLCJjb3JyZXRvcmEiOjF9LCJpc3MiOiJjaGF0OnRlbGVwb3J0IiwiYXVkIjoiaHR0cHM6Ly90ZWxlcG9ydC5jb20uYnIiLCJpYXQiOjE1NzgwMjc3NjIsIm5iZiI6MTU3ODAyNzc2Mn0.50bQ0iZVlVg7PBW9qb1OzW0nqXqHf0-NXu3h5Tqhv_YEpxxVHOSTCZIh2QZ5UijbTxgTKPw706UVvLCjlN-cig'
+	const payload = verify(jwt, {}, 'f4348f039868786f4a93ca27c1f748b7')
+	t.is(payload.data.empresa, 8)
+})
+
 test('[duration] times up', async t => {
 	const jwt = sign({name: 'Sabrina Takamoto'}, {duration: 1})
 	await sleep(2)
