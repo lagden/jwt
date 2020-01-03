@@ -29,9 +29,21 @@ test('[666] sign and verify', t => {
 	t.is(payload.data.corretora, 666)
 })
 
-test('[duration] timeout', async t => {
+test('[duration] times up', async t => {
 	const jwt = sign({name: 'Sabrina Takamoto'}, {duration: 1})
 	await sleep(2)
+	const payload = verify(jwt)
+	t.is(payload, null)
+})
+
+test('[secret] ok', t => {
+	const jwt = sign({name: 'Sabrina Takamoto'}, {}, 'new_secret')
+	const payload = verify(jwt, {}, 'new_secret')
+	t.is(payload.data.name, 'Sabrina Takamoto')
+})
+
+test('[secret] fail', t => {
+	const jwt = sign({name: 'Sabrina Takamoto'}, {}, 'new_secret')
 	const payload = verify(jwt)
 	t.is(payload, null)
 })

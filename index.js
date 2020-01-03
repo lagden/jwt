@@ -85,10 +85,7 @@ function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 	_options.algorithm = alg
 	_options.header = {typ}
 
-	const _key = JWK.asKey({
-		kty: 'oct',
-		k: secret
-	})
+	const _key = JWK.asKey({kty: 'oct', k: secret})
 
 	_log('sign -> _options', _options)
 
