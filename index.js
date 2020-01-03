@@ -23,32 +23,6 @@ const {
 } = process.env
 
 /**
- * Verifica se existem os claims solicitados
- * @private
- *
- * @param {object}  payload  - Carga de dados
- * @param {object}  options  - ...
- * @returns {boolean} ...
- */
-function _match(payload, options) {
-	const mapClaims = new Map()
-	mapClaims.set('audience', 'aud')
-	mapClaims.set('issuer', 'iss')
-	mapClaims.set('jti', 'jti')
-	mapClaims.set('subject', 'sub')
-
-	const claims = []
-	for (const k of Object.keys(options)) {
-		if (mapClaims.has(k)) {
-			claims.push(mapClaims.get(k))
-		}
-	}
-
-	const payloadKeys = Object.keys(payload)
-	return claims.every(claim => payloadKeys.includes(claim))
-}
-
-/**
  * Gera uma assinatura JWT (JSON Web Token)
  *
  * @param {object}  payload                          - Carga de dados
@@ -134,13 +108,7 @@ function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 function verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 	try {
 		const _key = JWK.asKey({kty: 'oct', k: secret})
-		const payload = JWT.verify(jwt, _key, options)
-
-		if (_match(payload, options) === true) {
-			return payload
-		}
-
-		throw new Error('Claims didn\'t match')
+		return JWT.verify(jwt, _key, options)
 	} catch (error) {
 		_error('verify', error.message)
 	}
