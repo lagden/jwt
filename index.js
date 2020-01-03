@@ -22,6 +22,14 @@ const {
 	TADASHI_SECRET_KEY_JWT = 'de66bd178d5abc9e848787b678f9b613'
 } = process.env
 
+/**
+ * Verifica se existem os claims solicitados
+ * @private
+ *
+ * @param {object}  payload  - Carga de dados
+ * @param {object}  options  - ...
+ * @returns {boolean} ...
+ */
 function _match(payload, options) {
 	const mapClaims = new Map()
 	mapClaims.set('audience', 'aud')

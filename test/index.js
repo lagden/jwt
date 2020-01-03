@@ -3,8 +3,6 @@
 import test from 'ava'
 import {sign, verify, parse} from '..'
 
-// console.log(sign, verify, parse)
-
 function sleep(s) {
 	return new Promise(resolve => {
 		setTimeout(() => {
@@ -97,7 +95,12 @@ test('[basic] no nbf', t => {
 
 test('[clockTolerance] validation', async t => {
 	const jwt = sign({name: 'Sabrina Takamoto'}, {duration: 1})
+	// wait
 	await sleep(2)
 	const payload = verify(jwt, {clockTolerance: '2s'})
 	t.is(payload.data.name, 'Sabrina Takamoto')
+	// times up
+	await sleep(2)
+	const payload2 = verify(jwt, {clockTolerance: '2s'})
+	t.false(payload2)
 })
