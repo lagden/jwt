@@ -1,7 +1,7 @@
 'use strict'
 
-import test from 'ava'
-import {sign, verify, parse} from '..'
+const test = require('ava')
+const {sign, verify, parse} = require('..')
 
 function sleep(s) {
 	return new Promise(resolve => {

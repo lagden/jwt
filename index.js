@@ -6,7 +6,7 @@
 'use strict'
 
 const {JWT, JWK} = require('jose')
-const hexid = require('@tadashi/hex-id')
+const hexID = require('@tadashi/hex-id')
 const debug = require('debug')
 
 const _error = debug('tadashi-jwt:error')
@@ -54,7 +54,7 @@ function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 	const tEnd = tNow + duration
 
 	let _payload = {}
-	const _claims = ['jti', 'iss', 'aud', 'sub', 'iat']
+	const _claims = new Set(['jti', 'iss', 'aud', 'sub', 'iat'])
 	const _options = {
 		algorithm: alg,
 		header: {typ}
@@ -67,7 +67,7 @@ function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 	}
 
 	for (const k of Object.keys(options)) {
-		if (_claims.includes(k)) {
+		if (_claims.has(k)) {
 			_payload[k] = options[k]
 		}
 	}
@@ -77,7 +77,7 @@ function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 	}
 
 	if (_payload.jti === true) {
-		_payload.jti = hexid()
+		_payload.jti = hexID()
 	}
 
 	_options.ignoreIat = ignoreIat

@@ -1,6 +1,6 @@
 {
   "name": "@tadashi/jwt",
-  "version": "4.0.2",
+  "version": "5.0.0",
   "description": "Sign, verify and parse a JSON Web Token",
   "main": "index.js",
   "files": [
@@ -22,16 +22,16 @@
   "author": "Thiago Lagden",
   "license": "MIT",
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=12.0.0"
   },
   "dependencies": {
-    "@tadashi/hex-id": "1.1.1",
+    "@tadashi/hex-id": "2.0.0",
     "debug": "4.1.1",
-    "jose": "1.18.1"
+    "jose": "1.25.0"
   },
   "devDependencies": {
-    "ava": "2.4.0",
-    "xo": "0.25.3"
+    "ava": "3.7.0",
+    "xo": "0.29.1"
   },
   "xo": {
     "envs": [
@@ -45,7 +45,8 @@
           "properties": "never"
         }
       ],
-      "capitalized-comments": 0
+      "capitalized-comments": 0,
+      "unicorn/prevent-abbreviations": 0
     }
   }
 }
