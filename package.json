@@ -27,7 +27,7 @@
   "dependencies": {
     "@tadashi/hex-id": "2.0.0",
     "debug": "4.1.1",
-    "jose": "1.25.0"
+    "jose": "1.25.2"
   },
   "devDependencies": {
     "ava": "3.7.0",
