@@ -3,11 +3,11 @@
  * @module index
  */
 
-'use strict'
-
-const {JWT, JWK} = require('jose')
-const hexID = require('@tadashi/hex-id')
-const debug = require('debug')
+import {Buffer} from 'node:buffer'
+import process from 'node:process'
+import {JWT, JWK} from 'jose'
+import hexID from '@tadashi/hex-id'
+import debug from 'debug'
 
 const _error = debug('tadashi-jwt:error')
 const _log = debug('tadashi-jwt:log')
@@ -19,7 +19,7 @@ const _log = debug('tadashi-jwt:log')
  */
 const {
 	TADASHI_ALG = 'HS512',
-	TADASHI_SECRET_KEY_JWT = 'de66bd178d5abc9e848787b678f9b613'
+	TADASHI_SECRET_KEY_JWT = 'de66bd178d5abc9e848787b678f9b613',
 } = process.env
 
 /**
@@ -40,14 +40,14 @@ const {
  * @param {string}  [secret=TADASHI_SECRET_KEY_JWT]  - Segredo de validação do token
  * @returns {string} JWT
  */
-function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
+export function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 	const {
 		typ = 'JWT',
 		alg = TADASHI_ALG,
 		duration = 0,
 		useData = true,
 		ignoreNbf = false,
-		ignoreIat = false
+		ignoreIat = false,
 	} = options
 
 	const tNow = Math.floor(Date.now() / 1000)
@@ -57,7 +57,7 @@ function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 	const _claims = new Set(['jti', 'iss', 'aud', 'sub', 'iat'])
 	const _options = {
 		algorithm: alg,
-		header: {typ}
+		header: {typ},
 	}
 
 	if (useData) {
@@ -102,7 +102,7 @@ function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
  * @param {string} [secret=TADASHI_SECRET_KEY_JWT]     - Segredo para gerar o JWT
  * @returns {?object} O objeto completo ou null
  */
-function verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
+export function verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 	try {
 		const _key = JWK.asKey(Buffer.from(secret))
 		return JWT.verify(jwt, _key, options)
@@ -119,7 +119,7 @@ function verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
  * @param {string} jwt - JWT (JSON Web Token)
  * @returns {?object)} O objeto somente com a carga ou null
  */
-function parse(jwt) {
+export function parse(jwt) {
 	try {
 		return JWT.decode(jwt, {complete: false})
 	} catch (error) {
@@ -128,7 +128,3 @@ function parse(jwt) {
 
 	return null
 }
-
-exports.sign = sign
-exports.verify = verify
-exports.parse = parse

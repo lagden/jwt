@@ -1,15 +1,6 @@
-'use strict'
-
-const test = require('ava')
-const {sign, verify, parse} = require('..')
-
-function sleep(s) {
-	return new Promise(resolve => {
-		setTimeout(() => {
-			resolve()
-		}, s * 1000)
-	})
-}
+import test from 'ava'
+import sleep from '@tadashi/sleep'
+import {sign, verify, parse} from '../src/jwt.js'
 
 test('[basic] sign, verify', t => {
 	const jwt = sign({name: 'Sabrina Takamoto'})
@@ -24,7 +15,7 @@ test('[more] sign, verify, and claims', t => {
 })
 
 test('[666] sign and verify', t => {
-	const jwt = sign({id: 37046, name: 'Thiago Lagden', corretora: 666}, {iss: 'http://127.0.0.1'})
+	const jwt = sign({id: 37_046, name: 'Thiago Lagden', corretora: 666}, {iss: 'http://127.0.0.1'})
 	const payload = verify(jwt, {issuer: 'http://127.0.0.1'})
 	t.is(payload.data.corretora, 666)
 })
