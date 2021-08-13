@@ -5,7 +5,6 @@
   "type": "module",
   "main": "src/jwt.js",
   "files": [
-    "lib",
     "LICENSE",
     "README.md"
   ],
