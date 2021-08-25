@@ -1,24 +1,12 @@
 #!/usr/bin/env node
 
+import process from 'node:process'
 import path from 'node:path'
-import {promises, createWriteStream} from 'node:fs'
+import {readFile} from 'node:fs/promises'
+import {createWriteStream} from 'node:fs'
 
-async function read(file, options = {}) {
-	let filehandle
-	let content
-	try {
-		filehandle = await promises.open(file, 'r')
-		content = await filehandle.readFile(options)
-	} finally {
-		if (filehandle) {
-			await filehandle.close()
-		}
-	}
-	return content
-}
-
-const packageFile = path.resolve(process.cwd(), 'package.json')
-const packageBuf = await read(packageFile)
+const packageFile = new URL(path.resolve(process.cwd(), 'package.json'), import.meta.url)
+const packageBuf = await readFile(packageFile)
 const packageJson = JSON.parse(packageBuf)
 
 function _error(message) {
