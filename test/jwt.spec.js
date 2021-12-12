@@ -1,4 +1,4 @@
-import {generateSecret} from 'jose/util/generate_secret'
+import {generateSecret} from 'jose'
 import test from 'ava'
 import sleep from '@tadashi/sleep'
 import {

@@ -7,11 +7,11 @@ import process from 'node:process'
 import {TextDecoder} from 'node:util'
 import {Buffer} from 'node:buffer'
 import {createSecretKey, KeyObject} from 'node:crypto'
-import {SignJWT} from 'jose/jwt/sign'
-import {jwtVerify} from 'jose/jwt/verify'
-import {decode} from 'jose/util/base64url'
+import {SignJWT, jwtVerify, base64url} from 'jose'
 import hexID from '@tadashi/hex-id'
 import debug from 'debug'
+
+const {decode} = base64url
 
 const _error = debug('tadashi-jwt:error')
 const _log = debug('tadashi-jwt:log')
