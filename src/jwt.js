@@ -123,10 +123,24 @@ export async function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JW
  * @param {string|KeyObject} [secret=TADASHI_SECRET_KEY_JWT]  - Segredo para gerar o JWT
  * @returns {?object} O objeto completo ou null
  */
+export function _verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
+	const _key = secret instanceof KeyObject ? secret : _generateKey(secret)
+	return jwtVerify(jwt, _key, options)
+}
+
+/**
+ * Verifica se o JWT é válido
+ *
+ * É possível passar via `options` o `clockTolerance` - Diferença de tempo aceitável entre signatário e verificador em segundos
+ *
+ * @param {string} jwt                                        - JSON Web Token
+ * @param {object} [options={}]                               - Opções (https://github.com/panva/jose/blob/main/docs/functions/jwt_verify.jwtVerify.md#readme)
+ * @param {string|KeyObject} [secret=TADASHI_SECRET_KEY_JWT]  - Segredo para gerar o JWT
+ * @returns {?object} O objeto completo ou null
+ */
 export async function verify(jwt, options = {}, secret = TADASHI_SECRET_KEY_JWT) {
 	try {
-		const _key = secret instanceof KeyObject ? secret : _generateKey(secret)
-		const res = await jwtVerify(jwt, _key, options)
+		const res = await _verify(jwt, options, secret)
 		return res
 	} catch (error) {
 		_error('verify', error.message)

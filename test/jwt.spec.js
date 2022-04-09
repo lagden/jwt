@@ -4,6 +4,7 @@ import sleep from '@tadashi/sleep'
 import {
 	sign,
 	verify,
+	_verify,
 	parse,
 } from '../src/jwt.js'
 
@@ -168,4 +169,18 @@ test('[clockTolerance] validation', async t => {
 		clockTolerance: '1 seconds',
 	})
 	t.is(res, undefined)
+})
+
+test('verify_ promise', async t => {
+	const exp = Math.floor(Date.now() / 1000)
+	const nbf = Math.floor((Date.now() / 1000)) + 10_000
+
+	const jwt = await sign({name: 'Sabrina Takamoto'}, {exp, nbf})
+	const error = await t.throwsAsync(_verify(jwt))
+	t.is(error.message, '"nbf" claim timestamp check failed')
+
+	const key = await generateSecret('HS512')
+	const jwt2 = await sign({name: 'Sabrina Takamoto'}, {}, 'new_secret')
+	const error2 = await t.throwsAsync(_verify(jwt2, {}, key))
+	t.is(error2.message, 'signature verification failed')
 })
