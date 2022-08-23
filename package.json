@@ -1,6 +1,6 @@
 {
   "name": "@tadashi/jwt",
-  "version": "8.3.0",
+  "version": "8.3.1",
   "description": "Sign, verify and parse a JSON Web Token",
   "type": "module",
   "main": "src/jwt.js",
