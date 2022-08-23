@@ -11,7 +11,7 @@
   "scripts": {
     "eslint": "eslint --config .eslintrc.yml --ext .js --ignore-path .gitignore .",
     "pretest": "npm run eslint",
-    "test": "env DEBUG=tadashi-jwt:* c8 --reporter=text --reporter=text-summary --reporter=lcov ava --tap"
+    "test": "env DEBUG=tadashi-jwt:* c8 --reporter=text --reporter=text-summary --reporter=lcov ava"
   },
   "keywords": [
     "jwt",
@@ -27,13 +27,13 @@
   "dependencies": {
     "@tadashi/hex-id": "2.0.0",
     "debug": "4.3.4",
-    "jose": "4.8.3"
+    "jose": "4.9.0"
   },
   "devDependencies": {
     "@tadashi/sleep": "2.0.1",
     "ava": "4.3.1",
     "c8": "7.12.0",
-    "eslint": "8.21.0",
+    "eslint": "8.22.0",
     "eslint-config-xo": "0.41.0",
     "eslint-plugin-unicorn": "43.0.2"
   }

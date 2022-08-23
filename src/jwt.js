@@ -52,7 +52,7 @@ function _generateKey(key = TADASHI_SECRET_KEY_JWT) {
  *
  * @param {object}  payload                                    - Carga de dados
  * @param {object}  [options={}]                               - Opções
- * @param {number}  [options.useData=true]                     - Coloca o payload dentro da propriedade "data"
+ * @param {boolean} [options.useData=true]                     - Coloca o payload dentro da propriedade "data"
  * @param {string}  [options.iss]                              - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.1)
  * @param {string}  [options.sub]                              - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.2)
  * @param {string}  [options.aud]                              - Claim (https://tools.ietf.org/html/rfc7519#section-4.1.3)
