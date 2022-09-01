@@ -107,8 +107,8 @@ export async function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JW
 		.sign(_key)
 
 	_log('header', header)
+	_log('_payload', JSON.stringify(_payload, undefined, '  '))
 	// _log('_key', _key)
-	_log('_payload', _payload)
 
 	return jwt
 }

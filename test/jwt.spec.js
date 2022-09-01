@@ -48,9 +48,9 @@ test('[old jwt] verify', async t => {
 
 test('[generate] sign and verify another', async t => {
 	const data = {
-		id: 1_035_724,
-		name: 'Pallestra',
-		empresa: 20_539,
+		id: 38_771,
+		name: 'Antonio Carvalho',
+		empresa: 8,
 		corretora: 1,
 		unidade: 1,
 		produtor: 1,
@@ -62,8 +62,10 @@ test('[generate] sign and verify another', async t => {
 		iss: 'https://teleport.com.br',
 	}, 'f4348f039868786f4a93ca27c1f748b7')
 
+	// console.log('carvalho --->', jwt)
+
 	const {payload} = await verify(jwt, {}, 'f4348f039868786f4a93ca27c1f748b7')
-	t.is(payload.data.empresa, 20_539)
+	t.is(payload.data.empresa, 8)
 })
 
 test('[expiration] times up', async t => {
@@ -203,4 +205,32 @@ test('verify_ promise', async t => {
 	const jwt2 = await sign({name: 'Sabrina Takamoto'}, {}, 'new_secret')
 	const error2 = await t.throwsAsync(_verify(jwt2, {}, key))
 	t.is(error2.message, 'signature verification failed')
+})
+
+test('[generate] sign and verify using params', async t => {
+	const data = {
+		governance: {
+			company: 8,
+			unit: 1,
+			user: 118,
+			source: 'TELEPORT',
+		},
+		scopes: 'exec:micro_service',
+	}
+
+	const jwt = await sign(data, {
+		useData: false,
+		aud: 'unit:test',
+		iss: 'https://teleport.com.br',
+		header: {
+			alg: 'HS256',
+			typ: 'JWT',
+		},
+	}, 'jkorijshfueya526jh3sw3748jdnywhd')
+
+	const {payload} = await verify(jwt, {}, 'jkorijshfueya526jh3sw3748jdnywhd')
+
+	// console.log('lagden --->', jwt)
+
+	t.is(payload.governance.company, 8)
 })
