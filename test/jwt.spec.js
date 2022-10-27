@@ -46,28 +46,6 @@ test('[old jwt] verify', async t => {
 	t.is(payload.data.empresa, 8)
 })
 
-test('[generate] sign and verify another', async t => {
-	const data = {
-		id: 38_771,
-		name: 'Antonio Carvalho',
-		empresa: 8,
-		corretora: 1,
-		unidade: 1,
-		produtor: 1,
-		source: 'TELEPORT',
-	}
-
-	const jwt = await sign(data, {
-		aud: 'unit:test',
-		iss: 'https://teleport.com.br',
-	}, 'f4348f039868786f4a93ca27c1f748b7')
-
-	// console.log('carvalho --->', jwt)
-
-	const {payload} = await verify(jwt, {}, 'f4348f039868786f4a93ca27c1f748b7')
-	t.is(payload.data.empresa, 8)
-})
-
 test('[expiration] times up', async t => {
 	const jwt = await sign({
 		name: 'Sabrina Takamoto',
