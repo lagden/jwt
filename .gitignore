@@ -1,4 +1,5 @@
 lab.js
+test/tex.spec.js
 
 # Logs
 logs
@@ -58,4 +59,3 @@ typings/
 
 # dotenv environment variables file
 .env
-test/tex.spec.js
