@@ -1,16 +1,12 @@
 import {generateSecret} from 'jose'
 import test from 'ava'
 import sleep from '@tadashi/sleep'
-import {
-	sign,
-	verify,
-	_verify,
-	parse,
-} from '../src/jwt.js'
+import {sign, verify, _verify, parse} from '../src/jwt.js'
 
 test('[basic] sign, verify', async t => {
-	const jwt = await sign({name: 'Sabrina Takamoto'})
-	const {payload} = await verify(jwt)
+	const jwt = await sign({name: 'Sabrina Takamoto', id: 123}, {}, 'the_secret')
+	const {payload} = await verify(jwt, {}, 'the_secret')
+	console.log('sssss >>>', jwt)
 	// t.snapshot(jwt)
 	// t.snapshot(payload)
 	t.is(payload.data.name, 'Sabrina Takamoto')
@@ -25,16 +21,21 @@ test('[more] sign, verify, and claims', async t => {
 })
 
 test('[666] sign and verify', async t => {
-	const jwt = await sign({
-		id: 37_046,
-		name: 'Thiago Lagden',
-		corretora: 666,
-	}, {
-		iss: 'urn:test:issuer',
-	})
+	const jwt = await sign(
+		{
+			id: 37_046,
+			name: 'Thiago Lagden',
+			corretora: 666,
+		},
+		{
+			iss: 'urn:test:issuer',
+		},
+	)
 	const res = await verify(jwt, {
 		issuer: 'urn:test:issuer',
 	})
+
+	console.log('---->>>', res)
 	const {payload} = res
 	// t.snapshot(res)
 	t.is(payload.data.corretora, 666)
@@ -47,22 +48,28 @@ test('[old jwt] verify', async t => {
 })
 
 test('[expiration] times up', async t => {
-	const jwt = await sign({
-		name: 'Sabrina Takamoto',
-	}, {
-		exp: '2 seconds',
-	})
+	const jwt = await sign(
+		{
+			name: 'Sabrina Takamoto',
+		},
+		{
+			exp: '2 seconds',
+		},
+	)
 	await sleep(3)
 	const res = await verify(jwt)
 	t.is(res, undefined)
 })
 
 test('[expiration] ok', async t => {
-	const jwt = await sign({
-		name: 'Sabrina Takamoto',
-	}, {
-		exp: '5 seconds',
-	})
+	const jwt = await sign(
+		{
+			name: 'Sabrina Takamoto',
+		},
+		{
+			exp: '5 seconds',
+		},
+	)
 	await sleep(2)
 	const {payload} = await verify(jwt)
 	t.is(payload.data.name, 'Sabrina Takamoto')
@@ -70,6 +77,7 @@ test('[expiration] ok', async t => {
 
 test('[secret] ok', async t => {
 	const jwt = await sign({name: 'Sabrina Takamoto'}, {}, 'new_secret')
+	console.log('>>>>>>>>', {jwt})
 	const {payload} = await verify(jwt, {}, 'new_secret')
 	t.is(payload.data.name, 'Sabrina Takamoto')
 })
@@ -133,7 +141,9 @@ test('[no sig] parse', t => {
 })
 
 test('[ok] parse', t => {
-	const {data: {name}} = parse('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJkYXRhIjp7Im5hbWUiOiJTYWJyaW5hIFRha2Ftb3RvIn0sImlhdCI6MTU3ODAyNTAwMH0.-lfGV42N3p1aAQjFCbdVOaqgbHcv3PndY1Eiv2CF_WRFKW2_4YA-N_o3bxV_iKZ1RkUeZcVUgx7IhhE_rCZBfA')
+	const {
+		data: {name},
+	} = parse('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJkYXRhIjp7Im5hbWUiOiJTYWJyaW5hIFRha2Ftb3RvIn0sImlhdCI6MTU3ODAyNTAwMH0.-lfGV42N3p1aAQjFCbdVOaqgbHcv3PndY1Eiv2CF_WRFKW2_4YA-N_o3bxV_iKZ1RkUeZcVUgx7IhhE_rCZBfA')
 	t.is(name, 'Sabrina Takamoto')
 })
 
@@ -145,18 +155,21 @@ test('[basic] noData', async t => {
 
 test('[basic] no nbf', async t => {
 	const exp = Math.floor(Date.now() / 1000)
-	const nbf = Math.floor((Date.now() / 1000)) + 10_000
+	const nbf = Math.floor(Date.now() / 1000) + 10_000
 	const jwt = await sign({name: 'Sabrina Takamoto'}, {exp, nbf})
 	const res = await verify(jwt)
 	t.is(res, undefined)
 })
 
 test('[clockTolerance] validation', async t => {
-	const jwt = await sign({
-		name: 'Sabrina Takamoto',
-	}, {
-		exp: '2 seconds',
-	})
+	const jwt = await sign(
+		{
+			name: 'Sabrina Takamoto',
+		},
+		{
+			exp: '2 seconds',
+		},
+	)
 	await sleep(2)
 	const {payload} = await verify(jwt, {
 		clockTolerance: '5 seconds',
@@ -173,7 +186,7 @@ test('[clockTolerance] validation', async t => {
 
 test('verify_ promise', async t => {
 	const exp = Math.floor(Date.now() / 1000)
-	const nbf = Math.floor((Date.now() / 1000)) + 10_000
+	const nbf = Math.floor(Date.now() / 1000) + 10_000
 
 	const jwt = await sign({name: 'Sabrina Takamoto'}, {exp, nbf})
 	const error = await t.throwsAsync(_verify(jwt))
@@ -196,15 +209,19 @@ test('[generate] sign and verify using params', async t => {
 		scopes: 'exec:micro_service',
 	}
 
-	const jwt = await sign(data, {
-		useData: false,
-		aud: 'unit:test',
-		iss: 'https://teleport.com.br',
-		header: {
-			alg: 'HS256',
-			typ: 'JWT',
+	const jwt = await sign(
+		data,
+		{
+			useData: false,
+			aud: 'unit:test',
+			iss: 'https://teleport.com.br',
+			header: {
+				alg: 'HS256',
+				typ: 'JWT',
+			},
 		},
-	}, 'jkorijshfueya526jh3sw3748jdnywhd')
+		'jkorijshfueya526jh3sw3748jdnywhd',
+	)
 
 	const {payload} = await verify(jwt, {}, 'jkorijshfueya526jh3sw3748jdnywhd')
 

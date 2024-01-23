@@ -30,10 +30,7 @@ claimsMap.set('jti', 'setJti')
  * @constant {string}  [TADASHI_ALG='HS512']                                        - Algoritimo utilizado
  * @constant {string}  [TADASHI_SECRET_KEY_JWT='de66bd178d5abc9e848787b678f9b613']  - Segredo utilizado na geração e validação do JWT
  */
-const {
-	TADASHI_ALG = 'HS512',
-	TADASHI_SECRET_KEY_JWT = 'a2e4822a98337283e39f7b60acf85ec9',
-} = process.env
+const {TADASHI_ALG = 'HS512', TADASHI_SECRET_KEY_JWT = 'a2e4822a98337283e39f7b60acf85ec9'} = process.env
 
 /**
  * Gera a chave
@@ -102,9 +99,7 @@ export async function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JW
 	}
 
 	const _key = secret instanceof KeyObject ? secret : _generateKey(secret)
-	const jwt = await jwtInstance
-		.setProtectedHeader(header)
-		.sign(_key)
+	const jwt = await jwtInstance.setProtectedHeader(header).sign(_key)
 
 	_log('header', header)
 	_log('_payload', JSON.stringify(_payload, undefined, '  '))
