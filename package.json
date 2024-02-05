@@ -30,7 +30,7 @@
   "dependencies": {
     "@tadashi/hex-id": "3.0.2",
     "debug": "4.3.4",
-    "jose": "5.2.0"
+    "jose": "5.2.1"
   },
   "devDependencies": {
     "@tadashi/sleep": "2.0.1",
