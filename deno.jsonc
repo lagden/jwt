@@ -1,0 +1,23 @@
+{
+  "lint": {
+    "include": ["src/", "test/"],
+    "exclude": ["src/**/*.d.ts"],
+    "rules": {
+      "tags": ["recommended"],
+      "include": ["ban-untagged-todo"],
+      "exclude": ["no-unused-vars"]
+    }
+  },
+  "fmt": {
+    "useTabs": true,
+    "lineWidth": 200,
+    "indentWidth": 4,
+    "semiColons": false,
+    "singleQuote": true,
+    "proseWrap": "preserve",
+    "include": ["src/", "test/"]
+  },
+  "unstable": [
+    "sloppy-imports"
+  ]
+}
