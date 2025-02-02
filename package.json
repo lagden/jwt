@@ -2,6 +2,7 @@
   "name": "@tadashi/jwt",
   "version": "8.8.0",
   "description": "Sign, verify and parse a JSON Web Token",
+  "licence": "MIT",
   "type": "module",
   "main": "./src/jwt.js",
   "types": "./types/jwt.d.ts",
