@@ -11,11 +11,6 @@ import { base64url, jwtVerify, SignJWT } from 'jose'
 import hexID from '@tadashi/hex-id'
 import debug from 'debug'
 
-const pkg = new URL('../package.json', import.meta.url)
-const mod = await import(pkg.href, {
-	with: { type: 'json' },
-})
-
 const { decode } = base64url
 
 const _error = debug('tadashi-jwt:error')
@@ -65,15 +60,7 @@ export async function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JW
 		},
 	} = options
 
-	let _payload = {
-		'@tadashi/jwt': mod.default.version,
-	}
-
-	if (useData) {
-		_payload = { data: { ...payload }, ..._payload } // Keep data nested if useData is true
-	} else {
-		_payload = { ...payload, ..._payload } // Directly use payload if not wrapping
-	}
+	const _payload = useData ? { data: { ...payload } } : { ...payload }
 
 	if (jti) {
 		options.jti = jti === true ? hexID() : jti
@@ -96,7 +83,6 @@ export async function sign(payload, options = {}, secret = TADASHI_SECRET_KEY_JW
 
 	_log('header', header)
 	_log('_payload', JSON.stringify(_payload, undefined, '  '))
-	// _log('_key', _key)
 
 	return jwt
 }

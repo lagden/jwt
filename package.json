@@ -25,7 +25,8 @@
   "scripts": {
     "tsc": "tsc",
     "pretest": "npm run tsc",
-    "test": "env DEBUG=tadashi-jwt:* c8 --reporter=text --reporter=text-summary --reporter=lcov ava"
+    "test:debug": "env DEBUG=tadashi-jwt:* c8 --reporter=text --reporter=text-summary --reporter=lcov ava",
+    "test": "c8 --reporter=text --reporter=text-summary --reporter=lcov ava"
   },
   "dependencies": {
     "@tadashi/hex-id": "3.0.2",

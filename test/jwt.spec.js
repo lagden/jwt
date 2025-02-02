@@ -6,7 +6,6 @@ import { _verify, parse, sign, verify } from '../src/jwt.js'
 test('[basic] sign, verify', async (t) => {
 	const jwt = await sign({ name: 'Sabrina Takamoto', id: 123 }, {}, 'secret')
 	const { payload } = await verify(jwt, {}, 'secret')
-	console.log('sssssssssss >>>', jwt)
 	// t.snapshot(jwt)
 	// t.snapshot(payload)
 	t.is(payload.data.name, 'Sabrina Takamoto')
@@ -35,7 +34,6 @@ test('[666] sign and verify', async (t) => {
 		issuer: 'urn:test:issuer',
 	})
 
-	console.log('---->>>', res)
 	const { payload } = res
 	// t.snapshot(res)
 	t.is(payload.data.corretora, 666)
@@ -78,7 +76,6 @@ test('[expiration] ok', async (t) => {
 
 test('[secret] ok', async (t) => {
 	const jwt = await sign({ name: 'Sabrina Takamoto' }, {}, 'new_secret')
-	console.log('>>>>>>>>', { jwt })
 	const { payload } = await verify(jwt, {}, 'new_secret')
 	t.is(payload.data.name, 'Sabrina Takamoto')
 })
