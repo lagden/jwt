@@ -2,31 +2,30 @@
   "name": "@tadashi/jwt",
   "version": "8.8.0",
   "description": "Sign, verify and parse a JSON Web Token",
-  "licence": "MIT",
-  "type": "module",
-  "main": "./src/jwt.js",
-  "types": "./types/jwt.d.ts",
-  "files": [
-    "src",
-    "types",
-    "LICENSE",
-    "README.md"
-  ],
+  "author": "Thiago Lagden",
+  "license": "MIT; SEE LICENSE IN LICENSE.md",
   "keywords": [
     "jwt",
     "sign",
     "verify",
     "parse"
   ],
+  "engines": {
+    "node": ">=18"
+  },
+  "type": "module",
+  "main": "./src/jwt.js",
+  "types": "./types/jwt.d.ts",
+  "files": [
+    "src",
+    "types",
+    "LICENSE.md",
+    "README.md"
+  ],
   "scripts": {
     "tsc": "tsc",
     "pretest": "npm run tsc",
     "test": "env DEBUG=tadashi-jwt:* c8 --reporter=text --reporter=text-summary --reporter=lcov ava"
-  },
-  "author": "Thiago Lagden",
-  "license": "MIT",
-  "engines": {
-    "node": ">=18"
   },
   "dependencies": {
     "@tadashi/hex-id": "3.0.2",
