@@ -1,5 +1,6 @@
 import { setTimeout } from 'node:timers/promises'
 import { generateSecret } from 'jose'
+import { createSecretKey, subtle } from 'node:crypto'
 import test from 'ava'
 import { _verify, parse, sign, verify } from '../src/jwt.js'
 
@@ -87,7 +88,9 @@ test('[secret] fail', async (t) => {
 })
 
 test('[secret] generateSecret', async (t) => {
-	const key = await generateSecret('HS512')
+	const genKey = await generateSecret('HS512', {extractable: true})
+	const keyBuffer = await subtle.exportKey('raw', genKey)
+	const key = createSecretKey(keyBuffer)
 	const jwt = await sign({ name: 'Sabrina Takamoto' }, {}, key)
 	const { payload } = await verify(jwt, {}, key)
 	t.is(payload.data.name, 'Sabrina Takamoto')
@@ -194,7 +197,9 @@ test('verify_ promise', async (t) => {
 	const error = await t.throwsAsync(_verify(jwt))
 	t.is(error.message, '"nbf" claim timestamp check failed')
 
-	const key = await generateSecret('HS512')
+	const genKey = await generateSecret('HS512', {extractable: true})
+	const keyBuffer = await subtle.exportKey('raw', genKey)
+	const key = createSecretKey(keyBuffer)
 	const jwt2 = await sign({ name: 'Sabrina Takamoto' }, {}, 'new_secret')
 	const error2 = await t.throwsAsync(_verify(jwt2, {}, key))
 	t.is(error2.message, 'signature verification failed')
