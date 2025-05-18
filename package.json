@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@tadashi/hex-id": "3.0.2",
-    "debug": "4.4.0",
+    "debug": "4.4.1",
     "jose": "6.0.11"
   },
   "devDependencies": {
