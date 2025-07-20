@@ -31,7 +31,7 @@
   "dependencies": {
     "@tadashi/hex-id": "3.0.2",
     "debug": "4.4.0",
-    "jose": "6.0.11"
+    "jose": "6.0.12"
   },
   "devDependencies": {
     "@types/node": "22.15.15",
